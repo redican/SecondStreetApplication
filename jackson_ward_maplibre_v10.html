@@ -460,37 +460,36 @@ function clearEraLayers() {
             'icon-ignore-placement': true
           }
         });
-  
-      }
-    );
-  }
-      map.on('click', 'pois-symbol', (e) => {
-      
-        const p = e.features[0].properties;
-      
-        const html = `
-          <p class="popup-label">Historic Site</p>
-          <p class="popup-name">${escapeHtml(p.Name)}</p>
-          <p class="popup-notes">${escapeHtml(p.WhyShort)}</p>
-        `;
-      
-        new maplibregl.Popup({
+        
+        
+        map.on('click', 'pois-symbol', (e) => {
+        
+          const p = e.features[0].properties;
+        
+          const html = `
+            <p class="popup-label">Historic Site</p>
+            <p class="popup-name">${escapeHtml(p.Name || '')}</p>
+            <p class="popup-notes">${escapeHtml(p.WhyShort || '')}</p>
+          `;
+        
+          new maplibregl.Popup({
             closeButton: true,
             maxWidth: "280px"
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-      
-      });
-      
-      map.on('mouseenter', 'pois-symbol', () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      
-      map.on('mouseleave', 'pois-symbol', () => {
-        map.getCanvas().style.cursor = '';
-      });
+          })
+          .setLngLat(e.lngLat)
+          .setHTML(html)
+          .addTo(map);
+        
+        });
+        
+        
+        map.on('mouseenter', 'pois-symbol', () => {
+          map.getCanvas().style.cursor = 'pointer';
+        });
+        
+        map.on('mouseleave', 'pois-symbol', () => {
+          map.getCanvas().style.cursor = '';
+        });
 
 }
   }
