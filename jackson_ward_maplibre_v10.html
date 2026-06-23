@@ -429,25 +429,41 @@ function clearEraLayers() {
       document.getElementById('legend').style.display = 'none';
     }
       // Add POIs layer if this era has one
-  if (era.poisUrl) {
+    if (era.poisUrl) {
   
     map.addSource('pois', {
       type: 'geojson',
       data: era.poisUrl
     });
   
-      map.addLayer({
-        id: 'pois-symbol',
-        type: 'symbol',
-        source: 'pois',
-        layout: {
-          'icon-image': 'map-marker',
-          'icon-size': 0.8,
-          'icon-allow-overlap': true,
-          'icon-ignore-placement': true
+    map.loadImage(
+      'https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/map-pin-filled.png',
+      (error, image) => {
+  
+        if (error) {
+          console.error('Could not load marker icon', error);
+          return;
         }
-      });
-      
+  
+        if (!map.hasImage('map-marker')) {
+          map.addImage('map-marker', image);
+        }
+  
+        map.addLayer({
+          id: 'pois-symbol',
+          type: 'symbol',
+          source: 'pois',
+          layout: {
+            'icon-image': 'map-marker',
+            'icon-size': 0.8,
+            'icon-allow-overlap': true,
+            'icon-ignore-placement': true
+          }
+        });
+  
+      }
+    );
+  }
       map.on('click', 'pois-symbol', (e) => {
       
         const p = e.features[0].properties;
