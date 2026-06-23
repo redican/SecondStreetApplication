@@ -310,14 +310,25 @@
   // We add/remove the historical-tiles and parcels layers as the user picks eras.
   // Layer IDs stay constant ('historical-tiles-layer', 'parcels-fill', etc.) — only the sources change.
 
-  function clearEraLayers() {
-    ['parcels-hover', 'parcels-line', 'parcels-fill', 'historical-tiles-layer'].forEach(id => {
-      if (map.getLayer(id)) map.removeLayer(id);
-    });
-    ['parcels', 'historical-tiles'].forEach(id => {
-      if (map.getSource(id)) map.removeSource(id);
-    });
-  }
+function clearEraLayers() {
+  [
+    'pois-circle',
+    'parcels-hover',
+    'parcels-line',
+    'parcels-fill',
+    'historical-tiles-layer'
+  ].forEach(id => {
+    if (map.getLayer(id)) map.removeLayer(id);
+  });
+
+  [
+    'pois',
+    'parcels',
+    'historical-tiles'
+  ].forEach(id => {
+    if (map.getSource(id)) map.removeSource(id);
+  });
+}
 
   function loadEra(idx) {
     currentEraIdx = idx;
@@ -415,6 +426,27 @@
       // Hide legend when there's no parcels data
       document.getElementById('legend').style.display = 'none';
     }
+      // Add POIs layer if this era has one
+  if (era.poisUrl) {
+  
+    map.addSource('pois', {
+      type: 'geojson',
+      data: era.poisUrl
+    });
+  
+    map.addLayer({
+      id: 'pois-circle',
+      type: 'circle',
+      source: 'pois',
+      paint: {
+        'circle-radius': 8,
+        'circle-color': '#1a73e8',
+        'circle-stroke-color': '#ffffff',
+        'circle-stroke-width': 2
+      }
+    });
+
+}
   }
 
   // ============================================================
@@ -459,6 +491,34 @@
     }
     new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat).setHTML(html).addTo(map);
+    map.on('click', 'pois-circle', (e) => {
+
+        if (!e.features.length) return;
+      
+        const p = e.features[0].properties;
+      
+        const html = `
+          <p class="popup-label">Historic Site</p>
+          <p class="popup-name">${p.Name || ''}</p>
+          <p class="popup-notes">${p.WhyShort || ''}</p>
+        `;
+      
+        new maplibregl.Popup({
+          closeButton: true
+        })
+          .setLngLat(e.lngLat)
+          .setHTML(html)
+          .addTo(map);
+      
+      });
+
+    map.on('mouseenter', 'pois-circle', () => {
+      map.getCanvas().style.cursor = 'pointer';
+    });
+    
+    map.on('mouseleave', 'pois-circle', () => {
+      map.getCanvas().style.cursor = '';
+    });
   });
 
   // ============================================================
