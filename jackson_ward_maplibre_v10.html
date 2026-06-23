@@ -314,7 +314,7 @@
 
 function clearEraLayers() {
   [
-    'pois-circle',
+    'pois-symbol',
     'parcels-hover',
     'parcels-line',
     'parcels-fill',
@@ -543,7 +543,7 @@ function clearEraLayers() {
 
 
 // POI popup code goes here
-    map.on('click', 'pois-circle', (e) => {
+    map.on('click', 'pois-symbol', (e) => {
     
         if (!e.features.length) return;
     
@@ -565,11 +565,11 @@ function clearEraLayers() {
     
     });
     
-    map.on('mouseenter', 'pois-circle', () => {
+    map.on('mouseenter', 'pois-symbol', () => {
         map.getCanvas().style.cursor = 'pointer';
     });
     
-    map.on('mouseleave', 'pois-circle', () => {
+    map.on('mouseleave', 'pois-symbol', () => {
         map.getCanvas().style.cursor = '';
     });
   });
