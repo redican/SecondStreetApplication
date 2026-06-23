@@ -491,33 +491,40 @@ function clearEraLayers() {
     }
     new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat).setHTML(html).addTo(map);
-    map.on('click', 'pois-circle', (e) => {
+    map.on('click', 'parcels-fill', (e) => {
+    // parcel popup code only
+});
 
+
+// POI popup code goes here
+    map.on('click', 'pois-circle', (e) => {
+    
         if (!e.features.length) return;
-      
+    
         const p = e.features[0].properties;
-      
+    
         const html = `
           <p class="popup-label">Historic Site</p>
           <p class="popup-name">${p.Name || ''}</p>
           <p class="popup-notes">${p.WhyShort || ''}</p>
         `;
-      
+    
         new maplibregl.Popup({
-          closeButton: true
+          closeButton: true,
+          maxWidth: '260px'
         })
-          .setLngLat(e.lngLat)
-          .setHTML(html)
-          .addTo(map);
-      
-      });
-
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    
+    });
+    
     map.on('mouseenter', 'pois-circle', () => {
-      map.getCanvas().style.cursor = 'pointer';
+        map.getCanvas().style.cursor = 'pointer';
     });
     
     map.on('mouseleave', 'pois-circle', () => {
-      map.getCanvas().style.cursor = '';
+        map.getCanvas().style.cursor = '';
     });
   });
 
