@@ -314,7 +314,7 @@
 
 function clearEraLayers() {
   [
-    'pois-symbol',
+    'pois-circle',
     'parcels-hover',
     'parcels-line',
     'parcels-fill',
@@ -429,70 +429,54 @@ function clearEraLayers() {
       document.getElementById('legend').style.display = 'none';
     }
       // Add POIs layer if this era has one
-    if (era.poisUrl) {
+  if (era.poisUrl) {
   
     map.addSource('pois', {
       type: 'geojson',
       data: era.poisUrl
     });
   
-    map.loadImage(
-      'https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/map-pin-filled.png',
-      (error, image) => {
-  
-        if (error) {
-          console.error('Could not load marker icon', error);
-          return;
+      map.addLayer({
+        id: 'pois-circle',
+        type: 'circle',
+        source: 'pois',
+        paint: {
+          'circle-radius': 10,
+          'circle-color': '#1a73e8',
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 2
         }
-  
-        if (!map.hasImage('map-marker')) {
-          map.addImage('map-marker', image);
-        }
-  
-        map.addLayer({
-          id: 'pois-symbol',
-          type: 'symbol',
-          source: 'pois',
-          layout: {
-            'icon-image': 'map-marker',
-            'icon-size': 0.8,
-            'icon-allow-overlap': true,
-            'icon-ignore-placement': true
-          }
-        });
-        
-        
-        map.on('click', 'pois-symbol', (e) => {
-        
-          const p = e.features[0].properties;
-        
-          const html = `
-            <p class="popup-label">Historic Site</p>
-            <p class="popup-name">${escapeHtml(p.Name || '')}</p>
-            <p class="popup-notes">${escapeHtml(p.WhyShort || '')}</p>
-          `;
-        
-          new maplibregl.Popup({
+      });
+      
+      map.on('click', 'pois-circle', (e) => {
+      
+        const p = e.features[0].properties;
+      
+        const html = `
+          <p class="popup-label">Historic Site</p>
+          <p class="popup-name">${escapeHtml(p.Name)}</p>
+          <p class="popup-notes">${escapeHtml(p.WhyShort)}</p>
+        `;
+      
+        new maplibregl.Popup({
             closeButton: true,
             maxWidth: "280px"
-          })
-          .setLngLat(e.lngLat)
-          .setHTML(html)
-          .addTo(map);
-        
-        });
-        
-        
-        map.on('mouseenter', 'pois-symbol', () => {
-          map.getCanvas().style.cursor = 'pointer';
-        });
-        
-        map.on('mouseleave', 'pois-symbol', () => {
-          map.getCanvas().style.cursor = '';
-        });
-
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+      
       });
-    }
+      
+      map.on('mouseenter', 'pois-circle', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      
+      map.on('mouseleave', 'pois-circle', () => {
+        map.getCanvas().style.cursor = '';
+      });
+
+}
   }
 
   // ============================================================
@@ -500,6 +484,19 @@ function clearEraLayers() {
   // ============================================================
   // Hover and click handlers use the layer ID, which is stable across era swaps.
   // We attach them once and they continue to work as parcels layers come and go.
+
+  map.on('mousemove', 'parcels-fill', (e) => {
+    if (e.features.length > 0) {
+      map.getCanvas().style.cursor = 'pointer';
+      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
+    }
+  });
+  map.on('mouseleave', 'parcels-fill', () => {
+    map.getCanvas().style.cursor = '';
+    if (map.getLayer('parcels-hover')) {
+      map.setFilter('parcels-hover', ['==', 'FID', -1]);
+    }
+  });
 
   map.on('click', 'parcels-fill', (e) => {
     if (!e.features || !e.features.length) return;
@@ -524,20 +521,42 @@ function clearEraLayers() {
     }
     new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat).setHTML(html).addTo(map);
-    });
-    map.on('mousemove', 'parcels-fill', (e) => {
-    if (e.features.length > 0) {
-      map.getCanvas().style.cursor = 'pointer';
-      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
-    }
-    });
-    map.on('mouseleave', 'parcels-fill', () => {
-      map.getCanvas().style.cursor = '';
-      if (map.getLayer('parcels-hover')) {
-        map.setFilter('parcels-hover', ['==', 'FID', -1]);
-      }
-    });
+    map.on('click', 'parcels-fill', (e) => {
+    // parcel popup code only
+});
 
+
+// POI popup code goes here
+    map.on('click', 'pois-circle', (e) => {
+    
+        if (!e.features.length) return;
+    
+        const p = e.features[0].properties;
+    
+        const html = `
+          <p class="popup-label">Historic Site</p>
+          <p class="popup-name">${p.Name || ''}</p>
+          <p class="popup-notes">${p.WhyShort || ''}</p>
+        `;
+    
+        new maplibregl.Popup({
+          closeButton: true,
+          maxWidth: '260px'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    
+    });
+    
+    map.on('mouseenter', 'pois-circle', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    
+    map.on('mouseleave', 'pois-circle', () => {
+        map.getCanvas().style.cursor = '';
+    });
+  });
 
   // ============================================================
   // BASEMAP TOGGLE
