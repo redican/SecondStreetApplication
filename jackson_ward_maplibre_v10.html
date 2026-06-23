@@ -501,19 +501,6 @@ function clearEraLayers() {
   // Hover and click handlers use the layer ID, which is stable across era swaps.
   // We attach them once and they continue to work as parcels layers come and go.
 
-  map.on('mousemove', 'parcels-fill', (e) => {
-    if (e.features.length > 0) {
-      map.getCanvas().style.cursor = 'pointer';
-      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
-    }
-  });
-  map.on('mouseleave', 'parcels-fill', () => {
-    map.getCanvas().style.cursor = '';
-    if (map.getLayer('parcels-hover')) {
-      map.setFilter('parcels-hover', ['==', 'FID', -1]);
-    }
-  });
-
   map.on('click', 'parcels-fill', (e) => {
     if (!e.features || !e.features.length) return;
     const p = e.features[0].properties;
@@ -537,6 +524,18 @@ function clearEraLayers() {
     }
     new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat).setHTML(html).addTo(map);
+    });
+    map.on('mousemove', 'parcels-fill', (e) => {
+    if (e.features.length > 0) {
+      map.getCanvas().style.cursor = 'pointer';
+      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
+    }
+    });
+    map.on('mouseleave', 'parcels-fill', () => {
+      map.getCanvas().style.cursor = '';
+      if (map.getLayer('parcels-hover')) {
+        map.setFilter('parcels-hover', ['==', 'FID', -1]);
+      }
     });
 
 
