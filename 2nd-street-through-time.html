@@ -446,10 +446,6 @@ function clearEraLayers() {
       <circle cx="16" cy="15" r="5" fill="white"/>
     </svg>`;
 
-    const markerUrl = "data:image/svg+xml;base64," + btoa(markerSvg);
-
-    map.loadImage(markerUrl, (error, image) => {
-
     if (error) {
       console.error('Marker icon failed to load', error);
       return;
