@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>2nd Street Through Time</title>
 
+  <!-- MapLibre GL JS -->
   <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
   <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
 
@@ -105,93 +106,12 @@
     .basemap-btn + .basemap-btn {
       border-left: 0.5px solid var(--color-border-tertiary);
     }
-
-    /* Landing page styles */
-    #landing-page {
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--border-radius-lg);
-      overflow: hidden;
-    }
-    #map-app {
-      display: none;
-      width: 100%;
-      max-width: 480px;
-      margin: 0 auto;
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--border-radius-lg);
-      overflow: hidden;
-    }
-    .landing-era-btn {
-      padding: 10px 6px;
-      font-size: 11px;
-      background: var(--color-background-primary);
-      border: 0.5px solid var(--color-border-tertiary);
-      border-radius: var(--border-radius-md);
-      cursor: pointer;
-      color: var(--color-text-secondary);
-      font-family: var(--font-sans);
-      min-height: 44px;
-      transition: background 0.15s ease, color 0.15s ease;
-      text-align: center;
-    }
-    .landing-era-btn:hover {
-      background: var(--color-background-info);
-      color: var(--color-text-info);
-      border-color: var(--color-border-info);
-    }
-    .explore-all-btn {
-      width: 100%;
-      padding: 11px 16px;
-      font-size: 13px;
-      font-weight: 500;
-      background: var(--color-text-info);
-      color: #ffffff;
-      border: none;
-      border-radius: var(--border-radius-md);
-      cursor: pointer;
-      font-family: var(--font-sans);
-      transition: opacity 0.15s ease;
-    }
-    .explore-all-btn:hover {
-      opacity: 0.88;
-    }
-    .divider {
-      border: none;
-      border-top: 0.5px solid var(--color-border-tertiary);
-      margin: 0;
-    }
-    .stat-item {
-      text-align: center;
-      padding: 12px 8px;
-    }
-    .stat-number {
-      font-size: 20px;
-      font-weight: 500;
-      color: var(--color-text-primary);
-      margin: 0 0 2px 0;
-    }
-    .stat-label {
-      font-size: 10px;
-      color: var(--color-text-tertiary);
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
-      margin: 0;
-    }
   </style>
 </head>
 <body>
 
-<!-- ============================================================
-     LANDING PAGE
-     ============================================================ -->
-<div id="landing-page">
+<div id="kiosk-root" style="width:100%;max-width:480px;margin:0 auto;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
 
-  <!-- Header -->
   <div style="padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between;align-items:flex-end;">
     <div>
       <h2 style="font-size:18px;font-weight:500;margin:0 0 2px 0;">2nd Street through time</h2>
@@ -200,75 +120,16 @@
     <span style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;">prototype</span>
   </div>
 
-  <!-- Hero text -->
-  <div style="padding:18px 16px 16px;">
-    <p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);margin:0 0 12px 0;">
-      From Reconstruction-era commerce to post-highway revival, Second Street in Jackson Ward has been a living document of Black life in Richmond. This map lets you walk through six eras of that history — seeing who lived here, what they built, and what was taken away.
-    </p>
-    <p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);margin:0;">
-      Historical maps have been georeferenced by students at the University of Richmond. Parcels, points of interest, and era overviews are drawn from archival records, Sanborn fire insurance maps, and community documentation.
-    </p>
-  </div>
-
-  <hr class="divider" />
-
-  <!-- Stats row -->
-  <div style="display:grid;grid-template-columns:repeat(3,1fr);border-bottom:0.5px solid var(--color-border-tertiary);">
-    <div class="stat-item" style="border-right:0.5px solid var(--color-border-tertiary);">
-      <p class="stat-number">6</p>
-      <p class="stat-label">Historical eras</p>
-    </div>
-    <div class="stat-item" style="border-right:0.5px solid var(--color-border-tertiary);">
-      <p class="stat-number">140<span style="font-size:13px;">yr</span></p>
-      <p class="stat-label">Time span</p>
-    </div>
-    <div class="stat-item">
-      <p class="stat-number">POIs</p>
-      <p class="stat-label">Per era</p>
-    </div>
-  </div>
-
-  <!-- Era quick-jump -->
-  <div style="padding:12px 16px;background:var(--color-background-secondary);">
-    <p style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px 0;font-weight:500;">Jump to an era</p>
-    <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;margin-bottom:12px;" id="landing-era-buttons"></div>
-    <button class="explore-all-btn" id="explore-all-btn">Explore the full map</button>
-  </div>
-
-  <!-- About section -->
-  <div style="padding:14px 16px;border-top:0.5px solid var(--color-border-tertiary);">
-    <p style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 6px 0;">About this project</p>
-    <p style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0 0 8px 0;">
-      This is a collaborative digital humanities project developed with the Spatial Analysis Lab at the University of Richmond. Students georeference historical Sanborn maps and compile archival data on 2nd Street's built environment across time.
-    </p>
-    <p style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0;">
-      Some eras are still in production as students complete their georeferencing. Modern OpenStreetMap is shown as a reference layer for those eras.
-    </p>
-  </div>
-
-</div>
-
-<!-- ============================================================
-     MAP APP (hidden until user clicks through)
-     ============================================================ -->
-<div id="map-app">
-
-  <div style="padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between;align-items:flex-end;">
-    <div>
-      <h2 style="font-size:18px;font-weight:500;margin:0 0 2px 0;">2nd Street through time</h2>
-      <p style="font-size:12px;color:var(--color-text-secondary);margin:0;">Jackson Ward, Richmond</p>
-    </div>
-    <button id="back-btn" style="font-size:11px;color:var(--color-text-info);background:none;border:none;cursor:pointer;padding:0;font-family:var(--font-sans);">← Back</button>
-  </div>
-
   <div id="map-canvas" style="position:relative;width:100%;height:480px;background:var(--color-background-tertiary);">
     <div id="map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
 
+    <!-- Era pill -->
     <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
       <span style="color:var(--color-text-secondary);">Era:</span>
       <span id="era-label-pill" style="font-weight:500;margin-left:4px;">1925 – 1950</span>
     </div>
 
+    <!-- "Basemap in production" placeholder for eras without a real tile service yet -->
     <div id="basemap-placeholder" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;background:repeating-linear-gradient(45deg,#e8e3d6,#e8e3d6 10px,#dfd9c7 10px,#dfd9c7 20px);align-items:center;justify-content:center;text-align:center;padding:20px;flex-direction:column;pointer-events:none;">
       <div style="background:rgba(255,255,255,0.92);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 18px;max-width:80%;">
         <p style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;">Basemap in production</p>
@@ -277,6 +138,7 @@
       </div>
     </div>
 
+    <!-- Legend -->
     <div id="legend" style="position:absolute;bottom:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;z-index:2;line-height:1.5;">
       <p id="legend-title" style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;font-weight:500;">Parcel use, 1925 – 1950</p>
       <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#D85A30;border-radius:2px;"></span>Commercial</div>
@@ -285,18 +147,21 @@
       <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#B0B0B0;border-radius:2px;"></span>Vacant</div>
     </div>
 
+    <!-- Basemap toggle -->
     <div id="basemap-toggle" style="position:absolute;top:10px;right:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;z-index:2;overflow:hidden;display:flex;">
       <button data-mode="modern" class="basemap-btn">Modern</button>
       <button data-mode="historical" class="basemap-btn active">Historical</button>
     </div>
   </div>
 
+  <!-- Era info panel -->
   <div id="era-info" style="padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);">
     <p style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;">Era overview</p>
     <h3 id="era-title" style="font-size:16px;font-weight:500;margin:0 0 6px 0;">Harlem of the South</h3>
     <p id="era-blurb" style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0;">The Hippodrome and other venues hosted Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson. Despite Jim Crow, 2nd Street thrived as a center of Black art, business, and nightlife.</p>
   </div>
 
+  <!-- Era picker -->
   <div style="padding:12px 16px;background:var(--color-background-secondary);">
     <p style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px 0;font-weight:500;">Choose an era</p>
     <div id="era-buttons" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
@@ -305,6 +170,12 @@
 
 <script>
 (function(){
+  // ============================================================
+  // SIX-ERA CONFIG
+  // ============================================================
+  // Each era is self-contained. Fill in the URLs as students publish data.
+  // Set tileUrl to null for "basemap in production" placeholder.
+  // Set parcelsUrl to null if parcels aren't ready yet.
   const eras = [
     {
       id: '1885_1900',
@@ -362,63 +233,21 @@
     },
   ];
 
+  // Era default (1925-1950 since that's our real data)
   let currentEraIdx = 2;
-  let currentBasemapMode = 'historical';
-  let mapInitialized = false;
-  let map = null;
+  let currentBasemapMode = 'historical'; // 'modern' or 'historical'
 
   // ============================================================
-  // LANDING PAGE ERA BUTTONS
-  // ============================================================
-  const landingEraButtonsEl = document.getElementById('landing-era-buttons');
-  eras.forEach((era, idx) => {
-    const btn = document.createElement('button');
-    btn.textContent = era.label;
-    btn.className = 'landing-era-btn';
-    if (!era.tileUrl && !era.parcelsUrl) {
-      btn.style.opacity = '0.6';
-      btn.title = 'Data in production';
-    }
-    btn.addEventListener('click', () => {
-      currentEraIdx = idx;
-      showMapApp();
-    });
-    landingEraButtonsEl.appendChild(btn);
-  });
-
-  document.getElementById('explore-all-btn').addEventListener('click', () => {
-    currentEraIdx = 2;
-    showMapApp();
-  });
-
-  document.getElementById('back-btn').addEventListener('click', () => {
-    document.getElementById('landing-page').style.display = '';
-    document.getElementById('map-app').style.display = 'none';
-  });
-
-  // ============================================================
-  // SHOW MAP APP
-  // ============================================================
-  function showMapApp() {
-    document.getElementById('landing-page').style.display = 'none';
-    document.getElementById('map-app').style.display = '';
-
-    if (!mapInitialized) {
-      initMap();
-      mapInitialized = true;
-    } else {
-      loadEra(currentEraIdx);
-    }
-  }
-
-  // ============================================================
-  // MAP SETUP
+  // MAP CONFIG
   // ============================================================
   const CENTER = [-77.4352, 37.5489];
   const ZOOM_INITIAL = 16.5;
   const ZOOM_MAX = 20;
   const INITIAL_BEARING = 37;
 
+  // ============================================================
+  // STYLING HELPERS
+  // ============================================================
   function useClassColor(identifica) {
     if (!identifica) return '#B0B0B0';
     const v = String(identifica).trim().toLowerCase();
@@ -440,152 +269,91 @@
     ));
   }
 
-  function initMap() {
-    map = new maplibregl.Map({
-      container: 'map',
-      style: {
-        version: 8,
-        sources: {
-          'osm-modern': {
-            type: 'raster',
-            tiles: [
-              'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
-              'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            ],
-            tileSize: 256,
-            attribution: '© OpenStreetMap contributors',
-            maxzoom: 19
-          }
-        },
-        layers: [
-          {
-            id: 'osm-modern-layer',
-            type: 'raster',
-            source: 'osm-modern',
-            paint: { 'raster-opacity': 1.0 }
-          }
-        ]
-      },
-      center: CENTER,
-      zoom: ZOOM_INITIAL,
-      maxZoom: ZOOM_MAX,
-      minZoom: 14,
-      bearing: INITIAL_BEARING,
-      dragRotate: false,
-      touchZoomRotate: false,
-      pitchWithRotate: false
-    });
-    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
-
-    // Basemap toggle
-    document.querySelectorAll('.basemap-btn').forEach(btn => {
-      btn.addEventListener('click', () => {
-        currentBasemapMode = btn.dataset.mode;
-        document.querySelectorAll('.basemap-btn').forEach(b => {
-          b.classList.toggle('active', b === btn);
-        });
-        const era = eras[currentEraIdx];
-        if (currentBasemapMode === 'modern') {
-          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
-          if (map.getLayer('historical-tiles-layer')) {
-            map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 0);
-          }
-          document.getElementById('basemap-placeholder').style.display = 'none';
-        } else {
-          if (era.tileUrl && map.getLayer('historical-tiles-layer')) {
-            map.setPaintProperty('osm-modern-layer', 'raster-opacity', 0.15);
-            map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 1.0);
-            document.getElementById('basemap-placeholder').style.display = 'none';
-          } else {
-            map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
-            document.getElementById('basemap-placeholder').style.display = 'flex';
-          }
+  // ============================================================
+  // MAP INITIALIZATION
+  // ============================================================
+  const map = new maplibregl.Map({
+    container: 'map',
+    style: {
+      version: 8,
+      sources: {
+        'osm-modern': {
+          type: 'raster',
+          tiles: [
+            'https://a.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'https://b.tile.openstreetmap.org/{z}/{x}/{y}.png',
+            'https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'
+          ],
+          tileSize: 256,
+          attribution: '© OpenStreetMap contributors',
+          maxzoom: 19
         }
-      });
-    });
-
-    // Era buttons
-    const eraButtonsEl = document.getElementById('era-buttons');
-    eras.forEach((era, idx) => {
-      const btn = document.createElement('button');
-      btn.textContent = era.label;
-      btn.className = 'era-btn';
-      if (!era.tileUrl && !era.parcelsUrl) {
-        btn.classList.add('disabled');
-        btn.title = 'Data in production';
-      }
-      btn.addEventListener('click', () => loadEra(idx));
-      eraButtonsEl.appendChild(btn);
-    });
-
-    // Hover/click on parcels (event listeners attached once — stable layer IDs)
-    map.on('mousemove', 'parcels-fill', (e) => {
-      if (e.features.length > 0) {
-        map.getCanvas().style.cursor = 'pointer';
-        map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
-      }
-    });
-    map.on('mouseleave', 'parcels-fill', () => {
-      map.getCanvas().style.cursor = '';
-      if (map.getLayer('parcels-hover')) {
-        map.setFilter('parcels-hover', ['==', 'FID', -1]);
-      }
-    });
-    map.on('click', 'parcels-fill', (e) => {
-      if (!e.features || !e.features.length) return;
-      const p = e.features[0].properties;
-      const useClass = useClassLabel(p.Identifica);
-      const useColor = useClassColor(p.Identifica);
-      const business = (p.Business_T || '').trim();
-      const name = (p.Name || '').trim();
-      const notes = (p.Notes || '').trim();
-      const address = (p.Address || '').trim();
-      let displayName = business;
-      if (!displayName && name && name !== 'Vacant') displayName = name;
-      if (!displayName) displayName = useClass;
-      let html = '';
-      html += `<p class="popup-label">${escapeHtml(address) || 'Address unknown'}</p>`;
-      html += `<p class="popup-name">${escapeHtml(displayName)}</p>`;
-      html += `<span class="popup-use" style="background:${useColor}22;color:${useColor};">${escapeHtml(useClass)}</span>`;
-      if (notes && notes !== ' ') {
-        html += `<p class="popup-notes">${escapeHtml(notes)}</p>`;
-      }
-      new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
-        .setLngLat(e.lngLat).setHTML(html).addTo(map);
-    });
-
-    map.on('load', () => loadEra(currentEraIdx));
-  }
+      },
+      layers: [
+        {
+          id: 'osm-modern-layer',
+          type: 'raster',
+          source: 'osm-modern',
+          paint: { 'raster-opacity': 1.0 }
+        }
+      ]
+    },
+    center: CENTER,
+    zoom: ZOOM_INITIAL,
+    maxZoom: ZOOM_MAX,
+    minZoom: 14,
+    bearing: INITIAL_BEARING,
+    dragRotate: false,
+    touchZoomRotate: false,
+    pitchWithRotate: false
+  });
+  map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
 
   // ============================================================
   // ERA SWITCHING
   // ============================================================
-  function clearEraLayers() {
-    ['pois-circle','parcels-hover','parcels-line','parcels-fill','historical-tiles-layer'].forEach(id => {
-      if (map.getLayer(id)) map.removeLayer(id);
-    });
-    ['pois','parcels','historical-tiles'].forEach(id => {
-      if (map.getSource(id)) map.removeSource(id);
-    });
-  }
+  // We add/remove the historical-tiles and parcels layers as the user picks eras.
+  // Layer IDs stay constant ('historical-tiles-layer', 'parcels-fill', etc.) — only the sources change.
+
+function clearEraLayers() {
+  [
+    'pois-marker',
+    'parcels-hover',
+    'parcels-line',
+    'parcels-fill',
+    'historical-tiles-layer'
+  ].forEach(id => {
+    if (map.getLayer(id)) map.removeLayer(id);
+  });
+
+  [
+    'pois',
+    'parcels',
+    'historical-tiles'
+  ].forEach(id => {
+    if (map.getSource(id)) map.removeSource(id);
+  });
+}
 
   function loadEra(idx) {
     currentEraIdx = idx;
     const era = eras[idx];
 
+    // Update side panel content
     document.getElementById('era-label-pill').textContent = era.label;
     document.getElementById('era-title').textContent = era.title;
     document.getElementById('era-blurb').textContent = era.blurb;
     document.getElementById('legend-title').textContent = 'Parcel use, ' + era.label;
     document.getElementById('placeholder-era-label').textContent = era.label;
 
+    // Highlight the active era button
     Array.from(document.getElementById('era-buttons').children).forEach((btn, i) => {
       btn.classList.toggle('active', i === idx);
     });
 
     clearEraLayers();
 
+    // Add the historical tile layer if this era has one
     if (era.tileUrl) {
       map.addSource('historical-tiles', {
         type: 'raster',
@@ -604,15 +372,22 @@
       });
       document.getElementById('basemap-placeholder').style.display = 'none';
     } else {
+      // No tile service for this era — show the placeholder.
+      // Force modern basemap full-opacity since there's no historical to show.
       document.getElementById('basemap-placeholder').style.display = currentBasemapMode === 'historical' ? 'flex' : 'none';
     }
 
+    // Set modern basemap opacity based on what's underneath
     map.setPaintProperty('osm-modern-layer', 'raster-opacity',
       currentBasemapMode === 'historical' && era.tileUrl ? 0.15 : 1.0
     );
 
+    // Add parcels layer if this era has one
     if (era.parcelsUrl) {
-      map.addSource('parcels', { type: 'geojson', data: era.parcelsUrl });
+      map.addSource('parcels', {
+        type: 'geojson',
+        data: era.parcelsUrl
+      });
       map.addLayer({
         id: 'parcels-fill',
         type: 'fill',
@@ -635,47 +410,225 @@
         id: 'parcels-line',
         type: 'line',
         source: 'parcels',
-        paint: { 'line-color': '#2A2A2A', 'line-width': 0.6, 'line-opacity': 0.6 }
+        paint: {
+          'line-color': '#2A2A2A',
+          'line-width': 0.6,
+          'line-opacity': 0.6
+        }
       });
       map.addLayer({
         id: 'parcels-hover',
         type: 'line',
         source: 'parcels',
-        paint: { 'line-color': '#1a73e8', 'line-width': 2 },
+        paint: {
+          'line-color': '#1a73e8',
+          'line-width': 2
+        },
         filter: ['==', 'FID', -1]
       });
       document.getElementById('legend').style.display = '';
     } else {
+      // Hide legend when there's no parcels data
       document.getElementById('legend').style.display = 'none';
     }
+      // Add POIs layer if this era has one
+  if (era.poisUrl) {
+  
+    map.addSource('pois', {
+      type: 'geojson',
+      data: era.poisUrl
+    });
+  
+    map.loadImage(
+  'https://cdn.jsdelivr.net/npm/@tabler/icons@2.47.0/icons/map-pin-filled.png',
+  (error, image) => {
 
-    if (era.poisUrl) {
-      map.addSource('pois', { type: 'geojson', data: era.poisUrl });
-      map.addLayer({
-        id: 'pois-circle',
-        type: 'circle',
-        source: 'pois',
-        paint: {
-          'circle-radius': 10,
-          'circle-color': '#1a73e8',
-          'circle-stroke-color': '#ffffff',
-          'circle-stroke-width': 2
-        }
-      });
-      map.on('click', 'pois-circle', (e) => {
+    if (error) {
+      console.error('Marker icon failed to load', error);
+      return;
+    }
+
+    if (!map.hasImage('historic-pin')) {
+      map.addImage('historic-pin', image);
+    }
+
+    map.addLayer({
+      id: 'pois-marker',
+      type: 'symbol',
+      source: 'pois',
+      layout: {
+        'icon-image': 'historic-pin',
+        'icon-size': 0.8,
+        'icon-allow-overlap': true,
+        'icon-ignore-placement': true
+      }
+    });
+
+  }
+);
+      
+      map.on('click', 'pois-marker', (e) => {
+      
         const p = e.features[0].properties;
+      
         const html = `
           <p class="popup-label">Historic Site</p>
           <p class="popup-name">${escapeHtml(p.Name)}</p>
           <p class="popup-notes">${escapeHtml(p.WhyShort)}</p>
         `;
-        new maplibregl.Popup({ closeButton: true, maxWidth: '280px' })
-          .setLngLat(e.lngLat).setHTML(html).addTo(map);
+      
+        new maplibregl.Popup({
+            closeButton: true,
+            maxWidth: "280px"
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+      
       });
-      map.on('mouseenter', 'pois-circle', () => { map.getCanvas().style.cursor = 'pointer'; });
-      map.on('mouseleave', 'pois-circle', () => { map.getCanvas().style.cursor = ''; });
-    }
+      
+      map.on('mouseenter', 'pois-marker', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      
+      map.on('mouseleave', 'pois-marker', () => {
+        map.getCanvas().style.cursor = '';
+      });
+
+}
   }
+
+  // ============================================================
+  // INTERACTIONS
+  // ============================================================
+  // Hover and click handlers use the layer ID, which is stable across era swaps.
+  // We attach them once and they continue to work as parcels layers come and go.
+
+  map.on('mousemove', 'parcels-fill', (e) => {
+    if (e.features.length > 0) {
+      map.getCanvas().style.cursor = 'pointer';
+      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
+    }
+  });
+  map.on('mouseleave', 'parcels-fill', () => {
+    map.getCanvas().style.cursor = '';
+    if (map.getLayer('parcels-hover')) {
+      map.setFilter('parcels-hover', ['==', 'FID', -1]);
+    }
+  });
+
+  map.on('click', 'parcels-fill', (e) => {
+    if (!e.features || !e.features.length) return;
+    const p = e.features[0].properties;
+    const useClass = useClassLabel(p.Identifica);
+    const useColor = useClassColor(p.Identifica);
+    const business = (p.Business_T || '').trim();
+    const name = (p.Name || '').trim();
+    const notes = (p.Notes || '').trim();
+    const address = (p.Address || '').trim();
+
+    let displayName = business;
+    if (!displayName && name && name !== 'Vacant') displayName = name;
+    if (!displayName) displayName = useClass;
+
+    let html = '';
+    html += `<p class="popup-label">${escapeHtml(address) || 'Address unknown'}</p>`;
+    html += `<p class="popup-name">${escapeHtml(displayName)}</p>`;
+    html += `<span class="popup-use" style="background:${useColor}22;color:${useColor};">${escapeHtml(useClass)}</span>`;
+    if (notes && notes !== ' ') {
+      html += `<p class="popup-notes">${escapeHtml(notes)}</p>`;
+    }
+    new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
+      .setLngLat(e.lngLat).setHTML(html).addTo(map);
+    map.on('click', 'parcels-fill', (e) => {
+    // parcel popup code only
+});
+
+
+// POI popup code goes here
+    map.on('click', 'pois-marker', (e) => {
+    
+        if (!e.features.length) return;
+    
+        const p = e.features[0].properties;
+    
+        const html = `
+          <p class="popup-label">Historic Site</p>
+          <p class="popup-name">${p.Name || ''}</p>
+          <p class="popup-notes">${p.WhyShort || ''}</p>
+        `;
+    
+        new maplibregl.Popup({
+          closeButton: true,
+          maxWidth: '260px'
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+    
+    });
+    
+    map.on('mouseenter', 'pois-marker', () => {
+        map.getCanvas().style.cursor = 'pointer';
+    });
+    
+    map.on('mouseleave', 'pois-marker', () => {
+        map.getCanvas().style.cursor = '';
+    });
+  });
+
+  // ============================================================
+  // BASEMAP TOGGLE
+  // ============================================================
+  document.querySelectorAll('.basemap-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentBasemapMode = btn.dataset.mode;
+      document.querySelectorAll('.basemap-btn').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+
+      const era = eras[currentEraIdx];
+
+      if (currentBasemapMode === 'modern') {
+        // Modern OSM at full opacity, hide historical tiles and placeholder.
+        map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+        if (map.getLayer('historical-tiles-layer')) {
+          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 0);
+        }
+        document.getElementById('basemap-placeholder').style.display = 'none';
+      } else {
+        // Historical mode
+        if (era.tileUrl && map.getLayer('historical-tiles-layer')) {
+          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 0.15);
+          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 1.0);
+          document.getElementById('basemap-placeholder').style.display = 'none';
+        } else {
+          // No historical tiles for this era — show placeholder over modern.
+          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+          document.getElementById('basemap-placeholder').style.display = 'flex';
+        }
+      }
+    });
+  });
+
+  // ============================================================
+  // ERA BUTTONS
+  // ============================================================
+  const eraButtonsEl = document.getElementById('era-buttons');
+  eras.forEach((era, idx) => {
+    const btn = document.createElement('button');
+    btn.textContent = era.label;
+    btn.className = 'era-btn';
+    if (!era.tileUrl && !era.parcelsUrl) {
+      btn.classList.add('disabled');
+      btn.title = 'Data in production';
+    }
+    btn.addEventListener('click', () => loadEra(idx));
+    eraButtonsEl.appendChild(btn);
+  });
+
+  // Initialize on the default era after the style is ready
+  map.on('load', () => loadEra(currentEraIdx));
 
 })();
 </script>
