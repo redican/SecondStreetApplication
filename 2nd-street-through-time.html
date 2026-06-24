@@ -432,42 +432,26 @@ function clearEraLayers() {
       document.getElementById('legend').style.display = 'none';
     }
       // Add POIs layer if this era has one
-  if (era.poisUrl) {
-  
-    map.addSource('pois', {
-      type: 'geojson',
-      data: era.poisUrl
-    });
-  
-    const markerSvg = `
-    <svg xmlns="http://www.w3.org/2000/svg" width="32" height="40" viewBox="0 0 32 40">
-      <path fill="#1a73e8" stroke="white" stroke-width="2"
-      d="M16 1C8 1 2 7 2 15c0 11 14 24 14 24s14-13 14-24C30 7 24 1 16 1z"/>
-      <circle cx="16" cy="15" r="5" fill="white"/>
-    </svg>`;
-
-    if (error) {
-      console.error('Marker icon failed to load', error);
-      return;
+      if (era.poisUrl) {
+    
+      map.addSource('pois', {
+        type: 'geojson',
+        data: era.poisUrl
+      });
+    
+      map.addLayer({
+        id: 'pois-symbol',
+        type: 'circle',
+        source: 'pois',
+        paint: {
+          'circle-radius': 7,
+          'circle-color': '#D85A30',
+          'circle-stroke-color': '#ffffff',
+          'circle-stroke-width': 2
+        }
+      });
+    
     }
-
-    if (!map.hasImage('historic-pin')) {
-      map.addImage('historic-pin', image);
-    }
-
-    map.addLayer({
-      id: 'pois-marker',
-      type: 'symbol',
-      source: 'pois',
-      layout: {
-        'icon-image': 'historic-pin',
-        'icon-size': 0.8,
-        'icon-allow-overlap': true,
-        'icon-ignore-placement': true
-      }
-    });
-
-  }
 );
       
       map.on('click', 'pois-marker', (e) => {
