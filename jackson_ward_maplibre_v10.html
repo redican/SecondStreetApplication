@@ -249,9 +249,9 @@
   // ============================================================
   // STYLING HELPERS
   // ============================================================
-  function useClassColor(identificationtion) {
-    if (!identification) return '#B0B0B0';
-    const v = String(identification).trim().toLowerCase();
+  function useClassColor(identifica) {
+    if (!identifica) return '#B0B0B0';
+    const v = String(identifica).trim().toLowerCase();
     if (v === 'commercial') return '#D85A30';
     if (v === 'residental' || v === 'residential') return '#4A7A9B';
     if (v === 'mixed use') return '#8B6F9A';
@@ -259,11 +259,11 @@
     if (v === 'institutional') return '#6B8E23';
     return '#888888';
   }
-  function useClassLabel(identification) {
-    if (!identification) return 'Unknown';
-    const v = String(identification).trim().toLowerCase();
+  function useClassLabel(identifica) {
+    if (!identifica) return 'Unknown';
+    const v = String(identifica).trim().toLowerCase();
     if (v === 'residental') return 'Residential';
-    return String(identification).trim();
+    return String(identifica).trim();
   }
   function escapeHtml(s) {
     return String(s).replace(/[&<>"']/g, c => (
@@ -397,7 +397,7 @@ function clearEraLayers() {
         paint: {
           'fill-color': [
             'match',
-            ['downcase', ['coalesce', ['get', 'identifica'], ['get', 'identificationtion'], '']],
+            ['downcase', ['coalesce', ['get', 'Identifica'], ['get', 'Identification'], '']],
             'commercial',  '#D85A30',
             'residental',  '#4A7A9B',
             'residential', '#4A7A9B',
@@ -507,8 +507,8 @@ function clearEraLayers() {
   map.on('click', 'parcels-fill', (e) => {
     if (!e.features || !e.features.length) return;
     const p = e.features[0].properties;
-    const useClass = useClassLabel(p.identification);
-    const useColor = useClassColor(p.identification);
+    const useClass = useClassLabel(p.Identifica);
+    const useColor = useClassColor(p.Identifica);
     const business = (p.Business_Type || '').trim();
     const name = (p.Name_1 || '').trim();
     const notes = (p.Notes || '').trim();
