@@ -509,7 +509,7 @@ function clearEraLayers() {
     const p = e.features[0].properties;
     const useClass = useClassLabel(p.Identifica);
     const useColor = useClassColor(p.Identifica);
-    const business = (p.Business_T || '').trim();
+    const business = (p.Business_Type || '').trim();
     const name = (p.Name || '').trim();
     const notes = (p.Notes || '').trim();
     const address = (p.Address || '').trim();
