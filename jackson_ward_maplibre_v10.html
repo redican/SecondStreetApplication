@@ -183,7 +183,7 @@
       title: 'Reconstruction & rise',
       blurb: 'In the decades after emancipation, 2nd Street emerged as the commercial spine of a thriving Black community. Banks, insurance offices, and theaters anchored the corridor.',
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/Mosaic1889Raster3/MapServer/tile/{z}/{y}/{x}',
-      parcelsUrl: null,
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1867_1887.geojson',
       poisUrl: 'https://redican.github.io/SecondStreetApplication/POI_1889.geojson',
     },
     {
@@ -395,7 +395,7 @@ function clearEraLayers() {
         paint: {
           'fill-color': [
             'match',
-            ['downcase', ['coalesce', ['get', 'Identification'], '']],
+            ['downcase', ['coalesce', ['get', 'Identification'], ['get', 'Identification'], '']],
             'commercial',  '#D85A30',
             'residental',  '#4A7A9B',
             'residential', '#4A7A9B',
