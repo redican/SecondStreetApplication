@@ -145,6 +145,7 @@
       <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#4A7A9B;border-radius:2px;"></span>Residential</div>
       <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#8B6F9A;border-radius:2px;"></span>Mixed use</div>
       <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#B0B0B0;border-radius:2px;"></span>Vacant</div>
+      <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#6B8E23;border-radius:2px;"></span>Institutional</div>
     </div>
 
     <!-- Basemap toggle -->
@@ -255,6 +256,7 @@
     if (v === 'residental' || v === 'residential') return '#4A7A9B';
     if (v === 'mixed use') return '#8B6F9A';
     if (v === 'vacant') return '#B0B0B0';
+    if (v === 'institutional') return '#6B8E23';
     return '#888888';
   }
   function useClassLabel(identifica) {
@@ -395,11 +397,12 @@ function clearEraLayers() {
         paint: {
           'fill-color': [
             'match',
-            ['downcase', ['coalesce', ['get', 'Identification'], ['get', 'Identification'], '']],
+            ['downcase', ['coalesce', ['get', 'Identifica'], ['get', 'Identification'], '']],
             'commercial',  '#D85A30',
             'residental',  '#4A7A9B',
             'residential', '#4A7A9B',
             'mixed use',   '#8B6F9A',
+            'institutional', '#6B8E23',
             'vacant',      '#B0B0B0',
             '#888888'
           ],
