@@ -432,7 +432,7 @@ function clearEraLayers() {
       document.getElementById('legend').style.display = 'none';
     }
       // Add POIs layer if this era has one
-      if (era.poisUrl) {
+    if (era.poisUrl) {
     
       map.addSource('pois', {
         type: 'geojson',
@@ -450,11 +450,10 @@ function clearEraLayers() {
           'circle-stroke-width': 2
         }
       });
-    
-    }
 
-      
       map.on('click', 'pois-marker', (e) => {
+
+        if (!e.features.length) return;
       
         const p = e.features[0].properties;
       
