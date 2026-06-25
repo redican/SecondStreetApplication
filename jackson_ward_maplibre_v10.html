@@ -162,6 +162,15 @@
     <p id="era-blurb" style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0;">The Hippodrome and other venues hosted Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson. Despite Jim Crow, 2nd Street thrived as a center of Black art, business, and nightlife.</p>
   </div>
 
+  <div id="poi-info"
+     style="
+       display:none;
+       padding:14px 16px;
+       border-bottom:0.5px solid var(--color-border-tertiary);
+       background:var(--color-background-primary);
+     ">
+  </div>
+
   <!-- Era picker -->
   <div style="padding:12px 16px;background:var(--color-background-secondary);">
     <p style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px 0;font-weight:500;">Choose an era</p>
@@ -269,6 +278,63 @@
     return String(s).replace(/[&<>"']/g, c => (
       { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
     ));
+  }
+
+  function showPoiInfo(properties) {
+
+    const imagePath = String(properties.Image1 || '')
+      .replace(/^images\//i, '')
+      .trim();
+  
+    const imageUrl = imagePath
+      ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
+      : '';
+  
+    const panel = document.getElementById('poi-info');
+  
+    panel.innerHTML = `
+      ${imageUrl ? `
+        <img
+          src="${imageUrl}"
+          alt="${escapeHtml(properties.Name)}"
+          style="
+            width:100%;
+            max-height:240px;
+            object-fit:cover;
+            border-radius:8px;
+            margin-bottom:12px;
+          "
+        >
+      ` : ''}
+  
+      <p class="popup-label">Historic Site</p>
+  
+      <h3 style="margin:0 0 8px 0;">
+        ${escapeHtml(properties.Name)}
+      </h3>
+  
+      <p style="
+        font-size:13px;
+        line-height:1.6;
+        color:var(--color-text-secondary);
+      ">
+        ${escapeHtml(properties.WhyLong || properties.WhyShort)}
+      </p>
+  
+      ${
+        properties.Image1Cite
+        ? `
+        <p style="margin-top:12px;">
+          <a href="${properties.Image1Cite}" target="_blank">
+            Image source
+          </a>
+        </p>
+        `
+        : ''
+      }
+    `;
+  
+    panel.style.display = 'block';
   }
 
   // ============================================================
@@ -474,47 +540,52 @@ function clearEraLayers() {
           : '';
       
         const html = `
-          ${imageUrl ? `
-            <img
-              src="${imageUrl}"
-              alt="${escapeHtml(p.Name)}"
-              style="
-                width:100%;
-                height:180px;
-                object-fit:cover;
-                border-radius:8px;
-                margin-bottom:8px;
-              "
-            >
-          ` : ''}
-      
           <p class="popup-label">Historic Site</p>
-      
+        
           <p class="popup-name">
             ${escapeHtml(p.Name)}
           </p>
-      
+        
           <p class="popup-notes">
-            ${escapeHtml(p.WhyLong || p.WhyShort)}
+            ${escapeHtml(p.WhyShort)}
           </p>
-      
-          ${p.Image1Cite ? `
-            <p style="font-size:10px;margin-top:8px;">
-              <a href="${p.Image1Cite}" target="_blank">
-                Image source
-              </a>
-            </p>
-          ` : ''}
+        
+          <button
+            id="learn-more-btn"
+            style="
+              margin-top:8px;
+              background:#1a73e8;
+              color:white;
+              border:none;
+              border-radius:6px;
+              padding:6px 10px;
+              cursor:pointer;
+            "
+          >
+            Learn More →
+          </button>
         `;
 
-  new maplibregl.Popup({
-    closeButton: true,
-    maxWidth: "350px"
-  })
-  .setLngLat(e.lngLat)
-  .setHTML(html)
-  .addTo(map);
+        const popup = new maplibregl.Popup({
+          closeButton: true,
+          maxWidth: "300px"
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
 
+        setTimeout(() => {
+
+          const btn = document.getElementById('learn-more-btn');
+        
+          if (!btn) return;
+        
+          btn.addEventListener('click', () => {
+            showPoiInfo(p);
+          });
+        
+        }, 0);
+        
 });
       
       map.on('mouseenter', 'pois-circle', () => {
@@ -578,36 +649,6 @@ function clearEraLayers() {
 });
 
 
-// POI popup code goes here
-    map.on('click', 'pois-circle', (e) => {
-    
-        if (!e.features.length) return;
-    
-        const p = e.features[0].properties;
-    
-        const html = `
-          <p class="popup-label">Historic Site</p>
-          <p class="popup-name">${p.Name || ''}</p>
-          <p class="popup-notes">${p.WhyShort || ''}</p>
-        `;
-    
-        new maplibregl.Popup({
-          closeButton: true,
-          maxWidth: '260px'
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-    
-    });
-    
-    map.on('mouseenter', 'pois-circle', () => {
-        map.getCanvas().style.cursor = 'pointer';
-    });
-    
-    map.on('mouseleave', 'pois-circle', () => {
-        map.getCanvas().style.cursor = '';
-    });
   });
 
   // ============================================================
