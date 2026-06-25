@@ -299,7 +299,7 @@
     ));
   }
   function openPoiPanel(p) {
-    const panel = document.getElementById('poi-info');
+    const panel = document.getElementById('poi-panel');
   
     const imagePath = String(p.Image1 || '')
       .replace(/^images\//i, '')
@@ -343,7 +343,7 @@
       ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
       : '';
   
-    const panel = document.getElementById('poi-info');
+    const panel = document.getElementById('poi-panel');
   
     panel.innerHTML = `
       ${imageUrl ? `
@@ -583,7 +583,7 @@ function clearEraLayers() {
       map.on('click', 'pois-circle', (e) => {
         const p = e.features[0].properties;
       
-        const html = `   <!-- 👈 STEP C GOES HERE -->
+        const html = `
           <p class="popup-label">Historic Site</p>
           <p class="popup-name">${p.Name || ''}</p>
           <p class="popup-notes">${p.WhyShort || ''}</p>
@@ -594,7 +594,7 @@ function clearEraLayers() {
           </button>
         `;
       
-        new maplibregl.Popup({
+        const popup = new maplibregl.Popup({
           closeButton: true,
           maxWidth: "300px"
         })
@@ -602,14 +602,11 @@ function clearEraLayers() {
         .setHTML(html)
         .addTo(map);
       
-        setTimeout(() => {
-          const btn = document.getElementById('learn-more-btn');
-          if (!btn) return;
-        
-          btn.addEventListener('click', () => {
+        // STEP B (correct binding)
+        popup.getElement().querySelector('#learn-more-btn')
+          .addEventListener('click', () => {
             openPoiPanel(p);
           });
-        }, 0);
       });
       
       map.on('mouseenter', 'pois-circle', () => {
@@ -734,9 +731,6 @@ function clearEraLayers() {
 
 })();
 
-document.getElementById('poi-close').addEventListener('click', () => {
-  document.getElementById('poi-panel').style.display = 'none';
-});
   
 </script>
 
