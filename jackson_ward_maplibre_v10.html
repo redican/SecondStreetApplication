@@ -507,7 +507,7 @@ function clearEraLayers() {
   map.on('click', 'parcels-fill', (e) => {
     if (!e.features || !e.features.length) return;
     const p = e.features[0].properties;
-    const useClass = useClassLabel(p.Identifica);
+    const useClass = useClassLabel(p.Identification);
     const useColor = useClassColor(p.Identification);
     const name = (p.Business_Type || '').trim();
     const notes = (p.Notes || '').trim();
