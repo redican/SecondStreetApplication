@@ -465,8 +465,12 @@ function clearEraLayers() {
       
         const p = e.features[0].properties;
       
-        const imageUrl = p.Image1
-          ? `https://redican.github.io/SecondStreetApplication/${p.Image1}`
+        const imagePath = String(p.Image1 || '')
+          .replace(/^images\//i, '')
+          .trim();
+        
+        const imageUrl = imagePath
+          ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
           : '';
       
         const html = `
