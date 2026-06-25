@@ -123,6 +123,33 @@
   <div id="map-canvas" style="position:relative;width:100%;height:480px;background:var(--color-background-tertiary);">
     <div id="map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
 
+  <div id="poi-panel" style="
+    display:none;
+    padding:14px 16px;
+    border-top:0.5px solid var(--color-border-tertiary);
+    background:white;
+    position:relative;
+  ">
+    <button id="poi-close" style="
+      position:absolute;
+      top:10px;
+      right:10px;
+      border:none;
+      background:transparent;
+      font-size:18px;
+      cursor:pointer;
+    ">×</button>
+  
+    <h3 id="poi-title" style="margin:0 0 8px 0;"></h3>
+  
+    <img id="poi-image"
+         style="width:100%;border-radius:8px;margin-bottom:8px;display:none;" />
+  
+    <p id="poi-short"></p>
+  
+    <p id="poi-long" style="display:none;"></p>
+  </div>
+
     <!-- Era pill -->
     <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
       <span style="color:var(--color-text-secondary);">Era:</span>
@@ -527,44 +554,33 @@ function clearEraLayers() {
         }
       });
       
-      map.on('click', 'pois-circle', (e) => {
-      
-        const p = e.features[0].properties;
-      
-        const imagePath = String(p.Image1 || '')
-          .replace(/^images\//i, '')
-          .trim();
-        
-        const imageUrl = imagePath
-          ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
-          : '';
-      
-        const html = `
-          <p class="popup-label">Historic Site</p>
-        
-          <p class="popup-name">
-            ${escapeHtml(p.Name)}
-          </p>
-        
-          <p class="popup-notes">
-            ${escapeHtml(p.WhyShort)}
-          </p>
-        
-          <button
-            id="learn-more-btn"
-            style="
-              margin-top:8px;
-              background:#1a73e8;
-              color:white;
-              border:none;
-              border-radius:6px;
-              padding:6px 10px;
-              cursor:pointer;
-            "
-          >
-            Learn More →
-          </button>
-        `;
+    map.on('click', 'pois-circle', (e) => {
+      const p = e.features[0].properties;
+    
+      const imagePath = String(p.Image1 || '')
+        .replace(/^images\//i, '');
+    
+      const imageUrl = imagePath
+        ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
+        : '';
+    
+      document.getElementById('poi-panel').style.display = 'block';
+    
+      document.getElementById('poi-title').textContent = p.Name || '';
+      document.getElementById('poi-short').textContent = p.WhyShort || '';
+    
+      const longEl = document.getElementById('poi-long');
+      longEl.textContent = p.WhyLong || '';
+    
+      const img = document.getElementById('poi-image');
+    
+      if (imageUrl) {
+        img.src = imageUrl;
+        img.style.display = 'block';
+      } else {
+        img.style.display = 'none';
+      }
+    });
 
         const popup = new maplibregl.Popup({
           closeButton: true,
@@ -594,6 +610,10 @@ function clearEraLayers() {
       
       map.on('mouseleave', 'pois-circle', () => {
         map.getCanvas().style.cursor = '';
+      });
+
+      map.on('click', () => {
+        document.getElementById('poi-panel').style.display = 'none';
       });
 
 }
@@ -705,6 +725,11 @@ function clearEraLayers() {
   map.on('load', () => loadEra(currentEraIdx));
 
 })();
+
+document.getElementById('poi-close').addEventListener('click', () => {
+  document.getElementById('poi-panel').style.display = 'none';
+});
+  
 </script>
 
 </body>
