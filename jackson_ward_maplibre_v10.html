@@ -465,21 +465,53 @@ function clearEraLayers() {
       
         const p = e.features[0].properties;
       
+        const imageUrl = p.Image1
+          ? `https://redican.github.io/SecondStreetApplication/${p.Image1}`
+          : '';
+      
         const html = `
+          ${imageUrl ? `
+            <img
+              src="${imageUrl}"
+              alt="${escapeHtml(p.Name)}"
+              style="
+                width:100%;
+                height:180px;
+                object-fit:cover;
+                border-radius:8px;
+                margin-bottom:8px;
+              "
+            >
+          ` : ''}
+      
           <p class="popup-label">Historic Site</p>
-          <p class="popup-name">${escapeHtml(p.Name)}</p>
-          <p class="popup-notes">${escapeHtml(p.WhyShort)}</p>
+      
+          <p class="popup-name">
+            ${escapeHtml(p.Name)}
+          </p>
+      
+          <p class="popup-notes">
+            ${escapeHtml(p.WhyLong || p.WhyShort)}
+          </p>
+      
+          ${p.Image1Cite ? `
+            <p style="font-size:10px;margin-top:8px;">
+              <a href="${p.Image1Cite}" target="_blank">
+                Image source
+              </a>
+            </p>
+          ` : ''}
         `;
-      
-        new maplibregl.Popup({
-            closeButton: true,
-            maxWidth: "280px"
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-      
-      });
+
+  new maplibregl.Popup({
+    closeButton: true,
+    maxWidth: "350px"
+  })
+  .setLngLat(e.lngLat)
+  .setHTML(html)
+  .addTo(map);
+
+});
       
       map.on('mouseenter', 'pois-circle', () => {
         map.getCanvas().style.cursor = 'pointer';
