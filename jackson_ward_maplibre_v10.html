@@ -342,6 +342,7 @@ function clearEraLayers() {
     const era = eras[idx];
 
     // Update side panel content
+    document.getElementById('basemap-toggle').style.display = era.tileUrl ? 'flex' : 'none';
     document.getElementById('era-label-pill').textContent = era.label;
     document.getElementById('era-title').textContent = era.title;
     document.getElementById('era-blurb').textContent = era.blurb;
