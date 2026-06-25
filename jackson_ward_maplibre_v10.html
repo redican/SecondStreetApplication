@@ -523,7 +523,7 @@ function clearEraLayers() {
     html += `<p class="popup-name">${escapeHtml(displayName)}</p>`;
     html += `<span class="popup-use" style="background:${useColor}22;color:${useColor};">${escapeHtml(useClass)}</span>`;
     if (id2level) {
-      html += '< class ="popup-notes">${escapeHtml(id2level)}</p>';
+      html += `<p class ="popup-notes">${escapeHtml(id2level)}</p>`;
     }
     if (notes && notes !== ' ') {
       html += `<p class="popup-notes">${escapeHtml(notes)}</p>`;
