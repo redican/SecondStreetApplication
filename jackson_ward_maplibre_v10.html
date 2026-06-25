@@ -309,29 +309,19 @@
       ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
       : '';
   
-    panel.innerHTML = `
-      <div style="display:flex;justify-content:space-between;align-items:center;">
-        <h3 style="margin:0;">${escapeHtml(p.Name || '')}</h3>
-        <button id="poi-close" style="border:none;background:none;font-size:18px;cursor:pointer;">×</button>
-      </div>
+    document.getElementById('poi-title').textContent = p.Name || '';
+    document.getElementById('poi-short').textContent = p.WhyShort || '';
+    document.getElementById('poi-long').textContent = p.WhyLong || '';
   
-      ${imageUrl ? `<img src="${imageUrl}" style="width:100%;margin-top:10px;border-radius:8px;">` : ''}
-  
-      <p style="margin-top:10px;line-height:1.5;color:#555;">
-        ${escapeHtml(p.WhyLong || '')}
-      </p>
-    `;
+    const img = document.getElementById('poi-image');
+    if (imageUrl) {
+      img.src = imageUrl;
+      img.style.display = 'block';
+    } else {
+      img.style.display = 'none';
+    }
   
     panel.style.display = 'block';
-  
-    setTimeout(() => {
-      const closeBtn = document.getElementById('poi-close');
-      if (closeBtn) {
-        closeBtn.addEventListener('click', () => {
-          panel.style.display = 'none';
-        });
-      }
-    }, 0);
   }
   function showPoiInfo(properties) {
 
@@ -605,6 +595,7 @@ function clearEraLayers() {
         // STEP B (correct binding)
         popup.getElement().querySelector('#learn-more-btn')
           .addEventListener('click', () => {
+            e.originalEvent?.stopPropagation();
             openPoiPanel(p);
           });
       });
@@ -617,9 +608,6 @@ function clearEraLayers() {
         map.getCanvas().style.cursor = '';
       });
 
-      map.on('click', () => {
-        document.getElementById('poi-panel').style.display = 'none';
-      });
 
 }
   }
@@ -728,6 +716,11 @@ function clearEraLayers() {
 
   // Initialize on the default era after the style is ready
   map.on('load', () => loadEra(currentEraIdx));
+
+  document.getElementById('poi-close').addEventListener('click', (e) => {
+    e.stopPropagation();
+    document.getElementById('poi-panel').style.display = 'none';
+  });
 
 })();
 
