@@ -343,6 +343,12 @@ function clearEraLayers() {
 
     // Update side panel content
     document.getElementById('basemap-toggle').style.display = era.tileUrl ? 'flex' : 'none';
+    if (!era.tileUrl) {
+      currentBasemapMode = 'modern';
+      document.querySelectorAll('.basemap-btn').forEach(b => {
+        b.classList.toggle('active', b.dataset.mode === 'modern');
+      });
+    }
     document.getElementById('era-label-pill').textContent = era.label;
     document.getElementById('era-title').textContent = era.title;
     document.getElementById('era-blurb').textContent = era.blurb;
