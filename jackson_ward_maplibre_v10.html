@@ -149,7 +149,7 @@
   
     <p id="poi-long" style="display:none;"></p>
   </div>
-  
+
     <!-- Era pill -->
     <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
       <span style="color:var(--color-text-secondary);">Era:</span>
@@ -189,6 +189,14 @@
     <p id="era-blurb" style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0;">The Hippodrome and other venues hosted Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson. Despite Jim Crow, 2nd Street thrived as a center of Black art, business, and nightlife.</p>
   </div>
 
+  <div id="poi-info"
+     style="
+       display:none;
+       padding:14px 16px;
+       border-bottom:0.5px solid var(--color-border-tertiary);
+       background:var(--color-background-primary);
+     ">
+  </div>
 
   <!-- Era picker -->
   <div style="padding:12px 16px;background:var(--color-background-secondary);">
@@ -298,31 +306,7 @@
       { '&':'&amp;', '<':'&lt;', '>':'&gt;', '"':'&quot;', "'":'&#39;' }[c]
     ));
   }
-  function openPoiPanel(p) {
-    const panel = document.getElementById('poi-panel');
-  
-    const imagePath = String(p.Image1 || '')
-      .replace(/^images\//i, '')
-      .trim();
-  
-    const imageUrl = imagePath
-      ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
-      : '';
-  
-    document.getElementById('poi-title').textContent = p.Name || '';
-    document.getElementById('poi-short').textContent = p.WhyShort || '';
-    document.getElementById('poi-long').textContent = p.WhyLong || '';
-  
-    const img = document.getElementById('poi-image');
-    if (imageUrl) {
-      img.src = imageUrl;
-      img.style.display = 'block';
-    } else {
-      img.style.display = 'none';
-    }
-  
-    panel.style.display = 'block';
-  }
+
   function showPoiInfo(properties) {
 
     const imagePath = String(properties.Image1 || '')
@@ -333,7 +317,7 @@
       ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
       : '';
   
-    const panel = document.getElementById('poi-panel');
+    const panel = document.getElementById('poi-info');
   
     panel.innerHTML = `
       ${imageUrl ? `
@@ -570,35 +554,70 @@ function clearEraLayers() {
         }
       });
       
-      map.on('click', 'pois-circle', (e) => {
-        const p = e.features[0].properties;
-      
-        const html = `
-          <p class="popup-label">Historic Site</p>
-          <p class="popup-name">${p.Name || ''}</p>
-          <p class="popup-notes">${p.WhyShort || ''}</p>
-      
-          <button id="learn-more-btn"
-            style="margin-top:8px;padding:6px 10px;font-size:11px;">
-            Learn more
-          </button>
+    map.on('click', 'pois-circle', (e) => {
+      const p = e.features[0].properties;
+    
+      const imagePath = String(p.Image1 || '')
+        .replace(/^images\//i, '')
+        .trim();
+    
+      const imageUrl = imagePath
+        ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
+        : '';
+    
+      // show panel
+      const panel = document.getElementById('poi-info');
+      panel.style.display = 'block';
+    
+      panel.innerHTML = `
+        ${imageUrl ? `
+          <img src="${imageUrl}" style="width:100%;border-radius:8px;margin-bottom:10px;">
+        ` : ''}
+    
+        <p class="popup-label">Historic Site</p>
+    
+        <h3 style="margin:0 0 8px 0;">
+          ${escapeHtml(p.Name || '')}
+        </h3>
+    
+        <p style="font-size:13px;line-height:1.5;color:#555;">
+          ${escapeHtml(p.WhyShort || '')}
+        </p>
+    
+        <button id="learn-more-btn" style="
+          margin-top:10px;
+          padding:6px 10px;
+          border:1px solid #ccc;
+          background:white;
+          cursor:pointer;
+          border-radius:6px;
+        ">
+          Learn more
+        </button>
+      `;
+    
+      document.getElementById('learn-more-btn').addEventListener('click', () => {
+        panel.innerHTML = `
+          <button id="poi-close" style="float:right;">×</button>
+    
+          ${imageUrl ? `<img src="${imageUrl}" style="width:100%;border-radius:8px;">` : ''}
+    
+          <h3>${escapeHtml(p.Name || '')}</h3>
+    
+          <p style="font-size:13px;line-height:1.6;color:#555;">
+            ${escapeHtml(p.WhyLong || p.WhyShort || '')}
+          </p>
         `;
-      
-        const popup = new maplibregl.Popup({
-          closeButton: true,
-          maxWidth: "300px"
-        })
-        .setLngLat(e.lngLat)
-        .setHTML(html)
-        .addTo(map);
-      
-        // STEP B (correct binding)
-        popup.getElement().querySelector('#learn-more-btn')
-          .addEventListener('click', () => {
-            e.originalEvent?.stopPropagation();
-            openPoiPanel(p);
-          });
+    
+        document.getElementById('poi-close').addEventListener('click', () => {
+          panel.style.display = 'none';
+        });
       });
+    });
+
+
+        
+});
       
       map.on('mouseenter', 'pois-circle', () => {
         map.getCanvas().style.cursor = 'pointer';
@@ -608,6 +627,9 @@ function clearEraLayers() {
         map.getCanvas().style.cursor = '';
       });
 
+      map.on('click', () => {
+        document.getElementById('poi-panel').style.display = 'none';
+      });
 
 }
   }
@@ -717,13 +739,11 @@ function clearEraLayers() {
   // Initialize on the default era after the style is ready
   map.on('load', () => loadEra(currentEraIdx));
 
-  document.getElementById('poi-close').addEventListener('click', (e) => {
-    e.stopPropagation();
-    document.getElementById('poi-panel').style.display = 'none';
-  });
-
 })();
 
+document.getElementById('poi-close').addEventListener('click', () => {
+  document.getElementById('poi-panel').style.display = 'none';
+});
   
 </script>
 
