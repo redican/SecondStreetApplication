@@ -527,7 +527,111 @@ function clearEraLayers() {
         }
       });
       
-      map.on('click', 'pois-circle', (e) => {
+
+}
+  }
+
+  // ============================================================
+  // INTERACTIONS
+  // ============================================================
+  // Hover and click handlers use the layer ID, which is stable across era swaps.
+  // We attach them once and they continue to work as parcels layers come and go.
+
+  map.on('mousemove', 'parcels-fill', (e) => {
+    if (e.features.length > 0) {
+      map.getCanvas().style.cursor = 'pointer';
+      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
+    }
+  });
+  map.on('mouseleave', 'parcels-fill', () => {
+    map.getCanvas().style.cursor = '';
+    if (map.getLayer('parcels-hover')) {
+      map.setFilter('parcels-hover', ['==', 'FID', -1]);
+    }
+  });
+
+  map.on('click', 'parcels-fill', (e) => {
+    if (!e.features || !e.features.length) return;
+    const p = e.features[0].properties;
+    const useClass = useClassLabel(p.Identification);
+    const useColor = useClassColor(p.Identification);
+    const name = (p.Business_Type || '').trim();
+    const notes = (p.Notes || '').trim();
+    const address = (p.Address || p.AddressLab || '').trim();
+    const id2level = (p.ID2level || '').trim();
+
+    let displayName = name;
+    if (!displayName && name && name !== 'Vacant') displayName = name;
+    if (!displayName) displayName = useClass;
+
+    let html = '';
+    html += `<p class="popup-label">${escapeHtml(address) || 'Address unknown'}</p>`;
+    html += `<p class="popup-name">${escapeHtml(displayName)}</p>`;
+    html += `<span class="popup-use" style="background:${useColor}22;color:${useColor};">${escapeHtml(useClass)}</span>`;
+    if (id2level) {
+      html += `<p class ="popup-notes">${escapeHtml(id2level)}</p>`;
+    }
+    if (notes && notes !== ' ') {
+      html += `<p class="popup-notes">${escapeHtml(notes)}</p>`;
+    }
+    new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
+      .setLngLat(e.lngLat).setHTML(html).addTo(map);
+
+
+
+  });
+
+  // ============================================================
+  // BASEMAP TOGGLE
+  // ============================================================
+  document.querySelectorAll('.basemap-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      currentBasemapMode = btn.dataset.mode;
+      document.querySelectorAll('.basemap-btn').forEach(b => {
+        b.classList.toggle('active', b === btn);
+      });
+
+      const era = eras[currentEraIdx];
+
+      if (currentBasemapMode === 'modern') {
+        // Modern OSM at full opacity, hide historical tiles and placeholder.
+        map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+        if (map.getLayer('historical-tiles-layer')) {
+          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 0);
+        }
+        document.getElementById('basemap-placeholder').style.display = 'none';
+      } else {
+        // Historical mode
+        if (era.tileUrl && map.getLayer('historical-tiles-layer')) {
+          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 0.15);
+          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 1.0);
+          document.getElementById('basemap-placeholder').style.display = 'none';
+        } else {
+          // No historical tiles for this era — show placeholder over modern.
+          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+          document.getElementById('basemap-placeholder').style.display = 'flex';
+        }
+      }
+    });
+  });
+
+  // ============================================================
+  // ERA BUTTONS
+  // ============================================================
+  const eraButtonsEl = document.getElementById('era-buttons');
+  eras.forEach((era, idx) => {
+    const btn = document.createElement('button');
+    btn.textContent = era.label;
+    btn.className = 'era-btn';
+    if (!era.tileUrl && !era.parcelsUrl) {
+      btn.classList.add('disabled');
+      btn.title = 'Data in production';
+    }
+    btn.addEventListener('click', () => loadEra(idx));
+    eraButtonsEl.appendChild(btn);
+  });
+
+        map.on('click', 'pois-circle', (e) => {
       
         const p = e.features[0].properties;
       
@@ -586,7 +690,7 @@ function clearEraLayers() {
         
         }, 0);
         
-});
+      });
       
       map.on('mouseenter', 'pois-circle', () => {
         map.getCanvas().style.cursor = 'pointer';
@@ -595,112 +699,7 @@ function clearEraLayers() {
       map.on('mouseleave', 'pois-circle', () => {
         map.getCanvas().style.cursor = '';
       });
-
-}
-  }
-
-  // ============================================================
-  // INTERACTIONS
-  // ============================================================
-  // Hover and click handlers use the layer ID, which is stable across era swaps.
-  // We attach them once and they continue to work as parcels layers come and go.
-
-  map.on('mousemove', 'parcels-fill', (e) => {
-    if (e.features.length > 0) {
-      map.getCanvas().style.cursor = 'pointer';
-      map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
-    }
-  });
-  map.on('mouseleave', 'parcels-fill', () => {
-    map.getCanvas().style.cursor = '';
-    if (map.getLayer('parcels-hover')) {
-      map.setFilter('parcels-hover', ['==', 'FID', -1]);
-    }
-  });
-
-  map.on('click', 'parcels-fill', (e) => {
-    if (!e.features || !e.features.length) return;
-    const p = e.features[0].properties;
-    const useClass = useClassLabel(p.Identification);
-    const useColor = useClassColor(p.Identification);
-    const name = (p.Business_Type || '').trim();
-    const notes = (p.Notes || '').trim();
-    const address = (p.Address || p.AddressLab || '').trim();
-    const id2level = (p.ID2level || '').trim();
-
-    let displayName = name;
-    if (!displayName && name && name !== 'Vacant') displayName = name;
-    if (!displayName) displayName = useClass;
-
-    let html = '';
-    html += `<p class="popup-label">${escapeHtml(address) || 'Address unknown'}</p>`;
-    html += `<p class="popup-name">${escapeHtml(displayName)}</p>`;
-    html += `<span class="popup-use" style="background:${useColor}22;color:${useColor};">${escapeHtml(useClass)}</span>`;
-    if (id2level) {
-      html += `<p class ="popup-notes">${escapeHtml(id2level)}</p>`;
-    }
-    if (notes && notes !== ' ') {
-      html += `<p class="popup-notes">${escapeHtml(notes)}</p>`;
-    }
-    new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
-      .setLngLat(e.lngLat).setHTML(html).addTo(map);
-    map.on('click', 'parcels-fill', (e) => {
-    // parcel popup code only
-});
-
-
-  });
-
-  // ============================================================
-  // BASEMAP TOGGLE
-  // ============================================================
-  document.querySelectorAll('.basemap-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-      currentBasemapMode = btn.dataset.mode;
-      document.querySelectorAll('.basemap-btn').forEach(b => {
-        b.classList.toggle('active', b === btn);
-      });
-
-      const era = eras[currentEraIdx];
-
-      if (currentBasemapMode === 'modern') {
-        // Modern OSM at full opacity, hide historical tiles and placeholder.
-        map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
-        if (map.getLayer('historical-tiles-layer')) {
-          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 0);
-        }
-        document.getElementById('basemap-placeholder').style.display = 'none';
-      } else {
-        // Historical mode
-        if (era.tileUrl && map.getLayer('historical-tiles-layer')) {
-          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 0.15);
-          map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 1.0);
-          document.getElementById('basemap-placeholder').style.display = 'none';
-        } else {
-          // No historical tiles for this era — show placeholder over modern.
-          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
-          document.getElementById('basemap-placeholder').style.display = 'flex';
-        }
-      }
-    });
-  });
-
-  // ============================================================
-  // ERA BUTTONS
-  // ============================================================
-  const eraButtonsEl = document.getElementById('era-buttons');
-  eras.forEach((era, idx) => {
-    const btn = document.createElement('button');
-    btn.textContent = era.label;
-    btn.className = 'era-btn';
-    if (!era.tileUrl && !era.parcelsUrl) {
-      btn.classList.add('disabled');
-      btn.title = 'Data in production';
-    }
-    btn.addEventListener('click', () => loadEra(idx));
-    eraButtonsEl.appendChild(btn);
-  });
-
+  
   // Initialize on the default era after the style is ready
   map.on('load', () => loadEra(currentEraIdx));
 
