@@ -123,33 +123,6 @@
   <div id="map-canvas" style="position:relative;width:100%;height:480px;background:var(--color-background-tertiary);">
     <div id="map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
 
-  <div id="poi-panel" style="
-    display:none;
-    padding:14px 16px;
-    border-top:0.5px solid var(--color-border-tertiary);
-    background:white;
-    position:relative;
-  ">
-    <button id="poi-close" style="
-      position:absolute;
-      top:10px;
-      right:10px;
-      border:none;
-      background:transparent;
-      font-size:18px;
-      cursor:pointer;
-    ">×</button>
-  
-    <h3 id="poi-title" style="margin:0 0 8px 0;"></h3>
-  
-    <img id="poi-image"
-         style="width:100%;border-radius:8px;margin-bottom:8px;display:none;" />
-  
-    <p id="poi-short"></p>
-  
-    <p id="poi-long" style="display:none;"></p>
-  </div>
-
     <!-- Era pill -->
     <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
       <span style="color:var(--color-text-secondary);">Era:</span>
@@ -308,7 +281,6 @@
   }
 
   function showPoiInfo(properties) {
-
     const imagePath = String(properties.Image1 || '')
       .replace(/^images\//i, '')
       .trim();
@@ -320,50 +292,49 @@
     const panel = document.getElementById('poi-info');
   
     panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <p class="popup-label" style="margin:0;">Historic Site</p>
+        <button
+          id="poi-close-btn"
+          style="
+            background:none;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+            color:var(--color-text-tertiary);
+            line-height:1;
+            padding:0;
+          "
+        >✕</button>
+      </div>
+  
       ${imageUrl ? `
         <img
           src="${imageUrl}"
           alt="${escapeHtml(properties.Name)}"
-          style="
-            width:100%;
-            max-height:240px;
-            object-fit:cover;
-            border-radius:8px;
-            margin-bottom:12px;
-          "
+          style="width:100%;max-height:240px;object-fit:cover;border-radius:8px;margin-bottom:12px;"
         >
       ` : ''}
   
-      <p class="popup-label">Historic Site</p>
+      <h3 style="margin:0 0 8px 0;">${escapeHtml(properties.Name)}</h3>
   
-      <h3 style="margin:0 0 8px 0;">
-        ${escapeHtml(properties.Name)}
-      </h3>
-  
-      <p style="
-        font-size:13px;
-        line-height:1.6;
-        color:var(--color-text-secondary);
-      ">
+      <p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);">
         ${escapeHtml(properties.WhyLong || properties.WhyShort)}
       </p>
   
-      ${
-        properties.Image1Cite
-        ? `
+      ${properties.Image1Cite ? `
         <p style="margin-top:12px;">
-          <a href="${properties.Image1Cite}" target="_blank">
-            Image source
-          </a>
+          <a href="${properties.Image1Cite}" target="_blank">Image source</a>
         </p>
-        `
-        : ''
-      }
+      ` : ''}
     `;
   
     panel.style.display = 'block';
+  
+    document.getElementById('poi-close-btn').addEventListener('click', () => {
+      panel.style.display = 'none';
+    });
   }
-
   // ============================================================
   // MAP INITIALIZATION
   // ============================================================
@@ -506,7 +477,7 @@ function clearEraLayers() {
             'vacant',      '#B0B0B0',
             '#888888'
           ],
-          'fill-opacity': 0.55
+          'fill-opacity': 0.80
         }
       });
       map.addLayer({
@@ -554,82 +525,6 @@ function clearEraLayers() {
         }
       });
       
-    map.on('click', 'pois-circle', (e) => {
-      const p = e.features[0].properties;
-    
-      const imagePath = String(p.Image1 || '')
-        .replace(/^images\//i, '')
-        .trim();
-    
-      const imageUrl = imagePath
-        ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
-        : '';
-    
-      // show panel
-      const panel = document.getElementById('poi-info');
-      panel.style.display = 'block';
-    
-      panel.innerHTML = `
-        ${imageUrl ? `
-          <img src="${imageUrl}" style="width:100%;border-radius:8px;margin-bottom:10px;">
-        ` : ''}
-    
-        <p class="popup-label">Historic Site</p>
-    
-        <h3 style="margin:0 0 8px 0;">
-          ${escapeHtml(p.Name || '')}
-        </h3>
-    
-        <p style="font-size:13px;line-height:1.5;color:#555;">
-          ${escapeHtml(p.WhyShort || '')}
-        </p>
-    
-        <button id="learn-more-btn" style="
-          margin-top:10px;
-          padding:6px 10px;
-          border:1px solid #ccc;
-          background:white;
-          cursor:pointer;
-          border-radius:6px;
-        ">
-          Learn more
-        </button>
-      `;
-    
-      document.getElementById('learn-more-btn').addEventListener('click', () => {
-        panel.innerHTML = `
-          <button id="poi-close" style="float:right;">×</button>
-    
-          ${imageUrl ? `<img src="${imageUrl}" style="width:100%;border-radius:8px;">` : ''}
-    
-          <h3>${escapeHtml(p.Name || '')}</h3>
-    
-          <p style="font-size:13px;line-height:1.6;color:#555;">
-            ${escapeHtml(p.WhyLong || p.WhyShort || '')}
-          </p>
-        `;
-    
-        document.getElementById('poi-close').addEventListener('click', () => {
-          panel.style.display = 'none';
-        });
-      });
-    });
-
-
-        
-
-      
-      map.on('mouseenter', 'pois-circle', () => {
-        map.getCanvas().style.cursor = 'pointer';
-      });
-      
-      map.on('mouseleave', 'pois-circle', () => {
-        map.getCanvas().style.cursor = '';
-      });
-
-      map.on('click', () => {
-        document.getElementById('poi-panel').style.display = 'none';
-      });
 
 }
   }
@@ -679,9 +574,7 @@ function clearEraLayers() {
     }
     new maplibregl.Popup({ closeButton: true, maxWidth: '260px' })
       .setLngLat(e.lngLat).setHTML(html).addTo(map);
-    map.on('click', 'parcels-fill', (e) => {
-    // parcel popup code only
-});
+
 
 
   });
@@ -736,15 +629,79 @@ function clearEraLayers() {
     eraButtonsEl.appendChild(btn);
   });
 
+        map.on('click', 'pois-circle', (e) => {
+      
+        const p = e.features[0].properties;
+      
+        const imagePath = String(p.Image1 || '')
+          .replace(/^images\//i, '')
+          .trim();
+        
+        const imageUrl = imagePath
+          ? `https://redican.github.io/SecondStreetApplication/${imagePath}`
+          : '';
+      
+        const html = `
+          <p class="popup-label">Historic Site</p>
+        
+          <p class="popup-name">
+            ${escapeHtml(p.Name)}
+          </p>
+        
+          <p class="popup-notes">
+            ${escapeHtml(p.WhyShort)}
+          </p>
+        
+          <button
+            id="learn-more-btn"
+            style="
+              margin-top:8px;
+              background:#1a73e8;
+              color:white;
+              border:none;
+              border-radius:6px;
+              padding:6px 10px;
+              cursor:pointer;
+            "
+          >
+            Learn More →
+          </button>
+        `;
+
+        const popup = new maplibregl.Popup({
+          closeButton: true,
+          maxWidth: "300px"
+        })
+        .setLngLat(e.lngLat)
+        .setHTML(html)
+        .addTo(map);
+
+        setTimeout(() => {
+
+          const btn = document.getElementById('learn-more-btn');
+        
+          if (!btn) return;
+        
+          btn.addEventListener('click', () => {
+            showPoiInfo(p);
+          });
+        
+        }, 0);
+        
+      });
+      
+      map.on('mouseenter', 'pois-circle', () => {
+        map.getCanvas().style.cursor = 'pointer';
+      });
+      
+      map.on('mouseleave', 'pois-circle', () => {
+        map.getCanvas().style.cursor = '';
+      });
+  
   // Initialize on the default era after the style is ready
   map.on('load', () => loadEra(currentEraIdx));
 
 })();
-
-document.getElementById('poi-close').addEventListener('click', () => {
-  document.getElementById('poi-panel').style.display = 'none';
-});
-  
 </script>
 
 </body>
