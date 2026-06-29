@@ -432,18 +432,19 @@
 
   // ── LANDING ERA BUTTONS ──
   const landingGrid = document.getElementById('landing-era-grid');
+  
   eras.forEach((era, idx) => {
     const btn = document.createElement('button');
     btn.className = 'landing-era-btn';
-    btn.innerHTML = '<span class="era-dates">' + era.label + '</span><span class="era-name">' + era.title + '</span>';
+    btn.innerHTML =
+      '<span class="era-dates">' + era.label + '</span>' +
+      '<span class="era-name">' + era.title + '</span>';
+  
     btn.addEventListener('click', () => {
       currentEraIdx = idx;
       showMap();
     });
-      btn.style.background = 'var(--ink)';
-      btn.style.color = 'var(--cream)';
-      btn.style.borderColor = 'var(--ink)';
-    });
+  
     landingGrid.appendChild(btn);
   });
 
