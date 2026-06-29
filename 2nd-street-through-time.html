@@ -188,21 +188,6 @@
       opacity: 0.7;
     }
 
-    .enter-btn {
-      width: 100%;
-      background: var(--ink);
-      color: var(--cream);
-      border: none;
-      padding: 14px;
-      font-family: var(--font-sans);
-      font-size: 12px;
-      font-weight: 500;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      cursor: pointer;
-      transition: background 0.15s;
-    }
-    .enter-btn:hover { background: var(--rust); }
 
     .card-footer {
       padding: 10px 28px;
@@ -322,7 +307,6 @@
     <div class="card-eras">
       <p class="eras-label">Jump to an era — or explore from the beginning</p>
       <div class="era-grid" id="landing-era-grid"></div>
-      <button class="enter-btn" id="enter-btn">Open the Map &rarr;</button>
     </div>
 
     <div class="card-footer">
@@ -454,11 +438,8 @@
     btn.innerHTML = '<span class="era-dates">' + era.label + '</span><span class="era-name">' + era.title + '</span>';
     btn.addEventListener('click', () => {
       currentEraIdx = idx;
-      landingGrid.querySelectorAll('.landing-era-btn').forEach(b => {
-        b.style.background = '';
-        b.style.color = '';
-        b.style.borderColor = '';
-      });
+      showMap();
+    });
       btn.style.background = 'var(--ink)';
       btn.style.color = 'var(--cream)';
       btn.style.borderColor = 'var(--ink)';
@@ -478,7 +459,6 @@
     }
   }
 
-  document.getElementById('enter-btn').addEventListener('click', showMap);
   document.getElementById('back-btn').addEventListener('click', () => {
     document.getElementById('app').style.display = 'none';
     document.getElementById('landing').style.display = 'flex';
