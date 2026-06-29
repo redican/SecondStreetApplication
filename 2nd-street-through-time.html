@@ -281,7 +281,6 @@
   }
 
   function showPoiInfo(properties) {
-
     const imagePath = String(properties.Image1 || '')
       .replace(/^images\//i, '')
       .trim();
@@ -293,50 +292,49 @@
     const panel = document.getElementById('poi-info');
   
     panel.innerHTML = `
+      <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">
+        <p class="popup-label" style="margin:0;">Historic Site</p>
+        <button
+          id="poi-close-btn"
+          style="
+            background:none;
+            border:none;
+            cursor:pointer;
+            font-size:16px;
+            color:var(--color-text-tertiary);
+            line-height:1;
+            padding:0;
+          "
+        >✕</button>
+      </div>
+  
       ${imageUrl ? `
         <img
           src="${imageUrl}"
           alt="${escapeHtml(properties.Name)}"
-          style="
-            width:100%;
-            max-height:240px;
-            object-fit:cover;
-            border-radius:8px;
-            margin-bottom:12px;
-          "
+          style="width:100%;max-height:240px;object-fit:cover;border-radius:8px;margin-bottom:12px;"
         >
       ` : ''}
   
-      <p class="popup-label">Historic Site</p>
+      <h3 style="margin:0 0 8px 0;">${escapeHtml(properties.Name)}</h3>
   
-      <h3 style="margin:0 0 8px 0;">
-        ${escapeHtml(properties.Name)}
-      </h3>
-  
-      <p style="
-        font-size:13px;
-        line-height:1.6;
-        color:var(--color-text-secondary);
-      ">
+      <p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);">
         ${escapeHtml(properties.WhyLong || properties.WhyShort)}
       </p>
   
-      ${
-        properties.Image1Cite
-        ? `
+      ${properties.Image1Cite ? `
         <p style="margin-top:12px;">
-          <a href="${properties.Image1Cite}" target="_blank">
-            Image source
-          </a>
+          <a href="${properties.Image1Cite}" target="_blank">Image source</a>
         </p>
-        `
-        : ''
-      }
+      ` : ''}
     `;
   
     panel.style.display = 'block';
+  
+    document.getElementById('poi-close-btn').addEventListener('click', () => {
+      panel.style.display = 'none';
+    });
   }
-
   // ============================================================
   // MAP INITIALIZATION
   // ============================================================
