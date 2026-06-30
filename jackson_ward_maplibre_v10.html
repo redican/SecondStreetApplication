@@ -623,7 +623,10 @@
       setTimeout(() => {
         const btn = document.getElementById('learn-more-btn');
         if (!btn) return;
-        btn.addEventListener('click', () => showPoiInfo(p));
+        btn.addEventListener('click', () => {
+          showPoiInfo(p);
+          map.flyTo({ center: e.lngLat, zoom: 19, speed: 0.8, curve: 1.2 });
+        });
       }, 0);
     });
     map.on('mouseenter', 'pois-circle', () => { map.getCanvas().style.cursor = 'pointer'; });
