@@ -652,20 +652,21 @@
       [-77.4310, 37.5800]  // northeast
     );
     
+    const DEFAULT_CENTER = [-77.43969803985877, 37.5451227330145]; // your original center
+    const DEFAULT_ZOOM = 16.5;
+    
     let isCorrectingBounds = false;
     
     map.on('moveend', () => {
-      if (isCorrectingBounds) return; // avoid feedback loop while we're correcting
+      if (isCorrectingBounds) return;
     
       const center = map.getCenter();
       if (!SOFT_BOUNDS.contains(center)) {
-        const clampedLng = Math.min(Math.max(center.lng, SOFT_BOUNDS.getWest()), SOFT_BOUNDS.getEast());
-        const clampedLat = Math.min(Math.max(center.lat, SOFT_BOUNDS.getSouth()), SOFT_BOUNDS.getNorth());
-    
         isCorrectingBounds = true;
         map.easeTo({
-          center: [clampedLng, clampedLat],
-          duration: 400
+          center: DEFAULT_CENTER,
+          zoom: DEFAULT_ZOOM,
+          duration: 600
         });
         map.once('moveend', () => { isCorrectingBounds = false; });
       }
