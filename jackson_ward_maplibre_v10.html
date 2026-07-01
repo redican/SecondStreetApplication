@@ -650,7 +650,6 @@
       const useClass = useClassLabel(p.Identification);
       const useColor = useClassColor(p.Identification);
       const name = (p.Business_Type || '').trim();
-      const notes = (p.Notes || '').trim();
       const address = (p.Address || p.AddressLab || '').trim();
       const id2level = (p.ID2level || '').trim();
       const displayName = name || useClass;
@@ -659,7 +658,6 @@
       html += '<p class="popup-name">' + escapeHtml(displayName) + '</p>';
       html += '<span class="popup-use" style="background:' + useColor + '22;color:' + useColor + ';">' + escapeHtml(useClass) + '</span>';
       if (id2level) html += '<p class="popup-notes">' + escapeHtml(id2level) + '</p>';
-      if (notes && notes !== ' ') html += '<p class="popup-notes">' + escapeHtml(notes) + '</p>';
       new maplibregl.Popup({ closeButton: true, maxWidth: '260px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
     });
 
