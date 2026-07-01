@@ -676,7 +676,7 @@
         '<p class="popup-name">' + escapeHtml(p.Name) + '</p>' +
         '<p class="popup-notes">' + escapeHtml(p.WhyShort) + '</p>' +
         '<button id="learn-more-btn" style="margin-top:8px;background:#1a73e8;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">Learn More \u2192</button>';
-      new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      const poiPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
       setTimeout(() => {
         const btn = document.getElementById('learn-more-btn');
         if (!btn) return;
@@ -684,6 +684,7 @@
           preZoomView = { center: map.getCenter(), zoom: map.getZoom() };
           showPoiInfo(p);
           map.flyTo({ center: e.lngLat, zoom: 19, speed: 0.8, curve: 1.2 });
+          poiPopup.remove();
         });
       }, 0);
     });
