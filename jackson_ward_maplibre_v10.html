@@ -503,6 +503,7 @@
   document.addEventListener('touchstart', resetInactivityTimer);
 
   let legendCollapsed = false;
+  let preZoomView = null;
   
   function setLegendCollapsed(collapsed) {
     legendCollapsed = collapsed;
@@ -552,7 +553,13 @@
       '<p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);">' + escapeHtml(properties.WhyLong || properties.WhyShort) + '</p>' +
       (properties.Image1Cite ? '<p style="margin-top:12px;"><a href="' + properties.Image1Cite + '" target="_blank">Image source</a></p>' : '');
     panel.style.display = 'block';
-    document.getElementById('poi-close-btn').addEventListener('click', () => { panel.style.display = 'none'; });
+    document.getElementById('poi-close-btn').addEventListener('click', () => {
+      panel.style.display = 'none';
+      if (preZoomView) {
+        map.flyTo({ center: preZoomView.center, zoom: preZoomView.zoom, speed: 0.8, curve: 1.2 });
+        preZoomView = null;
+      }
+    });
   }
 
   function clearEraLayers() {
@@ -674,6 +681,7 @@
         const btn = document.getElementById('learn-more-btn');
         if (!btn) return;
         btn.addEventListener('click', () => {
+          preZoomView = { center: map.getCenter(), zoom: map.getZoom() };
           showPoiInfo(p);
           map.flyTo({ center: e.lngLat, zoom: 19, speed: 0.8, curve: 1.2 });
         });
