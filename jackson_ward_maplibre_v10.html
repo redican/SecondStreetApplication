@@ -643,13 +643,33 @@
       dragRotate: false,
       touchZoomRotate: false,
       pitchWithRotate: false,
-      maxBounds: [
-        [-77.4480, 37.5370], // southwest corner [lng, lat]
-        [-77.4310, 37.5700]  // northeast corner [lng, lat]
-      ]
     });
     
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+    const SOFT_BOUNDS = new maplibregl.LngLatBounds(
+      [-77.4480, 37.5370], // southwest
+      [-77.4310, 37.5800]  // northeast
+    );
+    
+    let isCorrectingBounds = false;
+    
+    map.on('moveend', () => {
+      if (isCorrectingBounds) return; // avoid feedback loop while we're correcting
+    
+      const center = map.getCenter();
+      if (!SOFT_BOUNDS.contains(center)) {
+        const clampedLng = Math.min(Math.max(center.lng, SOFT_BOUNDS.getWest()), SOFT_BOUNDS.getEast());
+        const clampedLat = Math.min(Math.max(center.lat, SOFT_BOUNDS.getSouth()), SOFT_BOUNDS.getNorth());
+    
+        isCorrectingBounds = true;
+        map.easeTo({
+          center: [clampedLng, clampedLat],
+          duration: 400
+        });
+        map.once('moveend', () => { isCorrectingBounds = false; });
+      }
+    });
 
     // Parcel interactions
     map.on('mousemove', 'parcels-fill', (e) => {
