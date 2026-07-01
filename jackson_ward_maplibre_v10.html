@@ -280,6 +280,19 @@
     .basemap-btn + .basemap-btn {
       border-left: 0.5px solid var(--color-border-tertiary);
     }
+    
+    #legend { transition: padding 0.18s ease; }
+    #legend.collapsed { padding: 6px 8px; cursor: pointer; }
+    #legend.collapsed:hover { background: var(--color-background-secondary); }
+    #legend-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; }
+    #legend-toggle-btn {
+      background: none; border: none; padding: 2px; margin: 0 0 0 2px; cursor: pointer;
+      color: var(--color-text-tertiary); display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    #legend-toggle-btn svg { width: 12px; height: 12px; transition: transform 0.18s ease; }
+    #legend.collapsed #legend-toggle-btn svg { transform: rotate(180deg); }
+    #legend.collapsed #legend-body { display: none; }
+    
   </style>
 </head>
 <body>
@@ -348,12 +361,19 @@
       </div>
 
       <div id="legend" style="position:absolute;bottom:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;z-index:2;line-height:1.5;">
-        <p id="legend-title" style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;font-weight:500;">Parcel use</p>
-        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#D85A30;border-radius:2px;"></span>Commercial</div>
-        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#4A7A9B;border-radius:2px;"></span>Residential</div>
-        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#8B6F9A;border-radius:2px;"></span>Mixed use</div>
-        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#B0B0B0;border-radius:2px;"></span>Vacant</div>
-        <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#6B8E23;border-radius:2px;"></span>Institutional</div>
+        <div id="legend-header">
+          <p id="legend-title" style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0;font-weight:500;">Parcel use</p>
+          <button id="legend-toggle-btn" aria-label="Toggle legend" title="Toggle legend">
+            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div id="legend-body">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#D85A30;border-radius:2px;"></span>Commercial</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#4A7A9B;border-radius:2px;"></span>Residential</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#8B6F9A;border-radius:2px;"></span>Mixed use</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#B0B0B0;border-radius:2px;"></span>Vacant</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#6B8E23;border-radius:2px;"></span>Institutional</div>
+        </div>
       </div>
 
       <div id="basemap-toggle" style="position:absolute;top:10px;right:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;z-index:2;overflow:hidden;display:flex;">
@@ -481,6 +501,21 @@
 
   document.addEventListener('click', resetInactivityTimer);
   document.addEventListener('touchstart', resetInactivityTimer);
+
+  let legendCollapsed = false;
+  
+  function setLegendCollapsed(collapsed) {
+    legendCollapsed = collapsed;
+    document.getElementById('legend').classList.toggle('collapsed', collapsed);
+  }
+  
+  document.getElementById('legend-toggle-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    setLegendCollapsed(!legendCollapsed);
+  });
+  document.getElementById('legend').addEventListener('click', () => {
+    if (legendCollapsed) setLegendCollapsed(false);
+  });
 
   // ── HELPERS ──
   function useClassColor(id) {
