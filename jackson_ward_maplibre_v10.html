@@ -136,6 +136,43 @@
       color: var(--ink);
     }
 
+    .story-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--rust);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .story-details {
+      border-bottom: 1px solid var(--rule);
+      padding: 0 28px;
+    }
+    .story-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 14px 0;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      font-weight: 500;
+    }
+    .story-summary::-webkit-details-marker { display: none; }
+    .story-summary svg {
+      width: 11px;
+      height: 11px;
+      color: var(--ink-faint);
+      transition: transform 0.2s ease;
+    }
+    .story-details[open] .story-summary svg { transform: rotate(180deg); }
+    .story-content { padding-bottom: 18px; }
+
     .card-eras {
       padding: 18px 28px 24px;
     }
@@ -311,10 +348,33 @@
 
     <div class="card-body">
       <div class="rule-ornament"><span>✦</span></div>
+    
+      <p class="story-label">Mini History</p>
+      <p class="description" style="margin-bottom:16px;">
+        North Second Street was an important street for African Americans from the late 19th century to the 1950s. Many know it as the <strong>"Black Wall Street"</strong> of the South, when it contained some of the first Black-owned banks and insurance companies in the 1910s. Second Street then became a central cultural site; the Hippodrome and the Eggleston Hotel invited nationally renowned Black artists to spend time in Jackson Ward. In the late 1950s and early '60s, I-95 cut through the street's 800 block. Desegregation enabled Black people to shop at any business of their choosing — but led business away from Second Street. This led to a couple decades of economic decline. However, in recent years the street has been making a comeback as new businesses and respect for the neighborhood's rich history begin to fill up vacant storefronts.
+      </p>
+    
+      <p class="story-label">How It Works</p>
       <p class="description">
-        Once called the <strong>"Harlem of the South,"</strong> '.......                                                                                                                                            '
+        This 145-year period on North Second Street is grouped into six eras marking major changes. Click an era to see the buildings and interact with the map by clicking a building. Important sites are marked with a blue dot and contain more history.
       </p>
     </div>
+
+    <details class="story-details">
+      <summary class="story-summary">
+        <span>Why This Project</span>
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="story-content">
+        <p class="description" style="margin-bottom:14px;">
+          This project highlights changes on Second Street from 1867 to 2025. Second Street was important to the development of Jackson Ward, which was originally created in the 1870s as a voting district specifically to disenfranchise the Black voters of Richmond. But even with these unpleasant origins, the Black community of Jackson Ward made this place their own. Seeing a need for economic independence, Black residents began forming businesses and social clubs along Second Street. And even through major changes like the construction of I-95 and desegregation, it's always been home to Black entrepreneurship, community, and arts. Throughout this project we hope to highlight and celebrate the people, businesses, and institutions that have shaped the Jackson Ward community and the city of Richmond as a whole over these 160 years.
+        </p>
+        <p class="story-label">Thanks</p>
+        <p class="description">
+          With gratitude to the University of Richmond, Virginia Commonwealth University, the Historic Jackson Ward Association, the Black History Museum &amp; Cultural Center of Virginia, and Richmond Public Library for helping in the creation of this project.
+        </p>
+      </div>
+    </details>
 
 
     <div class="card-eras">
