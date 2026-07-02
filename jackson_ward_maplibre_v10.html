@@ -493,8 +493,7 @@
     // Only run the countdown while the map app is visible
     if (document.getElementById('app').style.display === 'flex') {
       inactivityTimer = setTimeout(() => {
-        document.getElementById('app').style.display = 'none';
-        document.getElementById('landing').style.display = 'flex';
+        window.location.reload();
       }, 90000); // 90 seconds
     }
   }
