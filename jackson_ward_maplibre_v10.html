@@ -406,6 +406,13 @@
     <div id="map-canvas" style="position:relative;width:100%;height:480px;background:var(--color-background-tertiary);">
       <div id="map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
 
+      <div id="map-hint" style="padding:10px 16px;background:#e8f0fe;border-bottom:0.5px solid #a8c5f7;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+        <p style="font-size:11px;color:#1a73e8;margin:0;line-height:1.5;">
+          💙 <strong>Scroll up</strong> and tap a <strong>blue circle</strong> for historic sites &nbsp;·&nbsp; Tap any <strong>building</strong> for details &nbsp;·&nbsp; Scroll down to <strong>change eras</strong>
+        </p>
+        <button onclick="document.getElementById('map-hint').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:14px;color:#1a73e8;padding:0;line-height:1;">✕</button>
+      </div>
+
       <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
         <span style="color:var(--color-text-secondary);">Era:</span>
         <span id="era-label-pill" style="font-weight:500;margin-left:4px;">1926 – 1950</span>
@@ -531,6 +538,7 @@
   function showMap() {
     document.getElementById('landing').style.display = 'none';
     document.getElementById('app').style.display = 'flex';
+    document.getElementById('map-hint').style.display = 'flex';
     resetInactivityTimer();
     if (!mapInitialized) {
       initMap();
