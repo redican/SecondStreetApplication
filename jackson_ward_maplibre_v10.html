@@ -440,6 +440,11 @@
         <button data-mode="modern" class="basemap-btn">Modern</button>
         <button data-mode="historical" class="basemap-btn active">Historical</button>
       </div>
+
+      <button id="photos-toggle" aria-pressed="true" style="position:absolute;top:46px;right:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;z-index:2;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--color-text-secondary);font-family:var(--font-sans);">
+        <span id="photos-toggle-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#E08F2A;"></span>
+        <span id="photos-toggle-label">Photos</span>
+      </button>
     </div>
 
     <div id="map-hint" style="padding:10px 16px;background:#e8f0fe;border-bottom:0.5px solid #a8c5f7;display:flex;align-items:center;justify-content:space-between;gap:10px;">
@@ -513,6 +518,7 @@
   ];
 
   let currentEraIdx = 2;
+  let photosVisible = true;
   let currentBasemapMode = 'historical';
   let mapInitialized = false;
   let map;
@@ -748,6 +754,7 @@
           ['>=', ['get', 'end'], eraStartYr]
         ],
         layout: {
+          'visibility': photosVisible ? 'visible' : 'none',
           'icon-image': 'photo-marker',
           'icon-rotate': ['coalesce', ['get', 'direction'], 0],
           'icon-rotation-alignment': 'map',
@@ -869,14 +876,18 @@
       const date = p.date ? ' \u00b7 ' + escapeHtml(p.date) : '';
       const entry = p.img_entry || '';
       const src = photoDisplayUrl(p.img_url);
+      const idMatch = (p.img_url || '').match(/\/images\/(\d+)\//);
+      const imgId = idMatch ? idMatch[1] : null;
       const html =
         '<p class="popup-label">Historic Photo' + date + '</p>' +
+        '<p class="photo-caption" style="font-size:13px;font-weight:500;line-height:1.4;margin:0 0 4px 0;color:var(--color-text-primary);"></p>' +
         '<img class="photo-img" src="' + escapeHtml(src) + '" alt="Historic photo of 2nd Street" loading="lazy" ' +
           'style="width:100%;max-width:260px;max-height:220px;object-fit:contain;border-radius:8px;display:block;margin:4px 0;background:#f0f0f0;">' +
         (entry ? '<a href="' + escapeHtml(entry) + '" target="_blank" rel="noopener" style="font-size:12px;">View source \u2197</a>' : '');
       const photoPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(coords).setHTML(html).addTo(map);
+      const popupEl = photoPopup.getElement();
       // Graceful fallback: if the image fails to load, hide it and show a note.
-      const imgEl = photoPopup.getElement().querySelector('img.photo-img');
+      const imgEl = popupEl.querySelector('img.photo-img');
       if (imgEl) imgEl.addEventListener('error', () => {
         imgEl.style.display = 'none';
         const note = document.createElement('p');
@@ -884,9 +895,34 @@
         note.textContent = 'Preview not available for this image \u2014 use the source link.';
         imgEl.after(note);
       });
+      // Live caption/description from the MapRVA "Yesterdays" API (degrades silently on failure).
+      if (imgId) {
+        fetch('https://yesterdays.maprva.org/api/v2/images/' + imgId + '/')
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (!d) return;
+            const caption = d.title || d.caption || d.name || '';
+            const capEl = popupEl.querySelector('.photo-caption');
+            if (capEl && caption) capEl.textContent = caption;
+          })
+          .catch(() => {});
+      }
     });
     map.on('mouseenter', 'photos-symbol', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'photos-symbol', () => { map.getCanvas().style.cursor = ''; });
+
+    // Photos on/off toggle
+    const photosToggleBtn = document.getElementById('photos-toggle');
+    if (photosToggleBtn) photosToggleBtn.addEventListener('click', () => {
+      photosVisible = !photosVisible;
+      if (map.getLayer('photos-symbol')) {
+        map.setLayoutProperty('photos-symbol', 'visibility', photosVisible ? 'visible' : 'none');
+      }
+      photosToggleBtn.setAttribute('aria-pressed', photosVisible ? 'true' : 'false');
+      photosToggleBtn.style.opacity = photosVisible ? '1' : '0.65';
+      document.getElementById('photos-toggle-dot').style.background = photosVisible ? '#E08F2A' : '#c9c9c9';
+      document.getElementById('photos-toggle-label').textContent = photosVisible ? 'Photos' : 'Photos off';
+    });
 
     // Basemap toggle
     document.querySelectorAll('.basemap-btn').forEach(btn => {
