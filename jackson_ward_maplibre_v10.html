@@ -400,6 +400,9 @@
       <div>
         <h2 style="font-size:18px;font-weight:500;margin:0 0 2px 0;">2nd Street through time</h2>
         <p style="font-size:12px;color:var(--color-text-secondary);margin:0;">Jackson Ward, Richmond</p>
+        <p id="map-attribution" style="font-size:9px;color:var(--color-text-tertiary);margin:4px 0 0 0;">
+          © OpenStreetMap contributors · MapLibre
+        </p>
       </div>
       <button id="back-btn" style="background:none;border:1px solid var(--color-border-tertiary);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;color:var(--color-text-secondary);font-family:var(--font-sans);">&larr; Back</button>
     </div>
@@ -699,6 +702,10 @@
     document.getElementById('legend-title').textContent = 'Parcel use, ' + era.label;
     document.getElementById('placeholder-era-label').textContent = era.label;
     document.getElementById('poi-info').style.display = 'none';
+    document.getElementById('map-attribution').textContent =
+      era.tileUrl
+        ? '© OpenStreetMap contributors · MapLibre · Historical basemap: Spatial Analysis Lab, University of Richmond'
+        : '© OpenStreetMap contributors · MapLibre';
 
     Array.from(document.getElementById('era-buttons').children).forEach((btn, i) => {
       btn.classList.toggle('active', i === idx);
@@ -782,6 +789,7 @@
       dragRotate: false,
       touchZoomRotate: false,
       pitchWithRotate: false,
+      attributionControl: false
     });
     
     map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
