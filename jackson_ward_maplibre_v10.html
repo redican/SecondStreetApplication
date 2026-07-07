@@ -635,25 +635,23 @@
 
   // Builds a Street-View style "view cone" marker as ImageData for map.addImage.
   // The cone points straight up (north) at rotation 0; icon-rotate spins it to the bearing.
-  function makePhotoMarker() {
-    const size = 48; // device px; registered at pixelRatio 2 => ~24 CSS px
+  function makePhotoMarker(color) {
+    const size = 48;
     const c = document.createElement('canvas');
     c.width = size; c.height = size;
     const ctx = c.getContext('2d');
     const cx = size / 2, cy = size / 2;
     const R = size * 0.46;
-    const half = 34 * Math.PI / 180; // ~68 degree field-of-view wedge
-    // field-of-view cone
+    const half = 34 * Math.PI / 180;
     ctx.beginPath();
     ctx.moveTo(cx, cy);
     ctx.arc(cx, cy, R, -Math.PI / 2 - half, -Math.PI / 2 + half);
     ctx.closePath();
-    ctx.fillStyle = 'rgba(224,143,42,0.38)';
+    ctx.fillStyle = color + '61'; // ~38% opacity wedge, matches your original rgba(...,0.38)
     ctx.fill();
-    // center dot
     ctx.beginPath();
     ctx.arc(cx, cy, size * 0.15, 0, Math.PI * 2);
-    ctx.fillStyle = '#E08F2A';
+    ctx.fillStyle = color;
     ctx.fill();
     ctx.lineWidth = size * 0.05;
     ctx.strokeStyle = '#ffffff';
@@ -757,18 +755,18 @@
     if (map.getSource('photos')) {
       if (map.getLayer('photos-symbol')) map.removeLayer('photos-symbol');
       const [eraStartYr, eraEndYr] = ERA_BOUNDS[idx];
+      const markerImage = idx < 3 ? 'photo-marker-black' : 'photo-marker-orange';
       map.addLayer({
         id: 'photos-symbol',
         type: 'symbol',
         source: 'photos',
-        // photo [start,end] overlaps this era iff start <= eraEnd AND end >= eraStart
         filter: ['all',
           ['<=', ['get', 'start'], eraEndYr],
           ['>=', ['get', 'end'], eraStartYr]
         ],
         layout: {
           'visibility': photosVisible ? 'visible' : 'none',
-          'icon-image': 'photo-marker',
+          'icon-image': markerImage, // 👈 swapped per era
           'icon-rotate': ['coalesce', ['get', 'direction'], 0],
           'icon-rotation-alignment': 'map',
           'icon-allow-overlap': true,
@@ -978,9 +976,11 @@
     });
 
     map.on('load', () => {
-      // Directional photo marker + one-time photos source (era filter applied in loadEra).
-      if (!map.hasImage('photo-marker')) {
-        map.addImage('photo-marker', makePhotoMarker(), { pixelRatio: 2 });
+      if (!map.hasImage('photo-marker-orange')) {
+        map.addImage('photo-marker-orange', makePhotoMarker('#E08F2A'), { pixelRatio: 2 });
+      }
+      if (!map.hasImage('photo-marker-black')) {
+        map.addImage('photo-marker-black', makePhotoMarker('#1a1a1a'), { pixelRatio: 2 });
       }
       if (!map.getSource('photos')) {
         map.addSource('photos', { type: 'geojson', data: PHOTOS_URL });
