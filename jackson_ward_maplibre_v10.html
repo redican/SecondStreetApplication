@@ -845,9 +845,11 @@
       const address = (p.Address || p.AddressLab || '').trim();
       const id2level = (p.ID2level || '').trim();
       const displayName = name || useClass;
+      const era = eras[currentEraIdx];
+    
       let html = '';
-      html += '<p class="popup-label">' + 
-        (escapeHtml(address) || 'Address unknown') + 
+      html += '<p class="popup-label">' +
+        (escapeHtml(address) || 'Address unknown') +
         (era.sourceYear ? ' <span style="opacity:0.6;">(' + era.sourceYear + ' directory)</span>' : '') +
         '</p>';
       html += '<p class="popup-name">' + escapeHtml(displayName) + '</p>';
