@@ -606,6 +606,46 @@
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  // ── HISTORIC PHOTOS (MapRVA / Yesterday's Richmond) ──
+  // Points carry a camera bearing (direction) and an `eras` array assigning each
+  // photo to every era its date range overlaps. Update this URL to your uploaded file.
+  const PHOTOS_URL = 'https://redican.github.io/SecondStreetApplication/photos_second_street.geojson';
+
+  // Numeric year bounds per era (same order as the `eras` array), used to filter
+  // photos by date-range overlap with plain integer props (no array handling).
+  const ERA_BOUNDS = [
+    [1867, 1887], [1888, 1925], [1926, 1950],
+    [1951, 1964], [1965, 1999], [2000, 9999]
+  ];
+
+  // Builds a Street-View style "view cone" marker as ImageData for map.addImage.
+  // The cone points straight up (north) at rotation 0; icon-rotate spins it to the bearing.
+  function makePhotoMarker() {
+    const size = 48; // device px; registered at pixelRatio 2 => ~24 CSS px
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    const cx = size / 2, cy = size / 2;
+    const R = size * 0.46;
+    const half = 34 * Math.PI / 180; // ~68 degree field-of-view wedge
+    // field-of-view cone
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, -Math.PI / 2 - half, -Math.PI / 2 + half);
+    ctx.closePath();
+    ctx.fillStyle = 'rgba(224,143,42,0.38)';
+    ctx.fill();
+    // center dot
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 0.15, 0, Math.PI * 2);
+    ctx.fillStyle = '#E08F2A';
+    ctx.fill();
+    ctx.lineWidth = size * 0.05;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    return ctx.getImageData(0, 0, size, size);
+  }
+
   function showPoiInfo(properties) {
     const imagePath = String(properties.Image1 || '').replace(/^images\//i, '').trim();
     const imageUrl = imagePath ? 'https://redican.github.io/SecondStreetApplication/' + imagePath : '';
@@ -691,6 +731,31 @@
     if (era.poisUrl) {
       map.addSource('pois', { type: 'geojson', data: era.poisUrl });
       map.addLayer({ id: 'pois-circle', type: 'circle', source: 'pois', paint: { 'circle-radius': 10, 'circle-color': '#1a73e8', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 } });
+    }
+
+    // Photos: source is loaded once (on map load). Re-add the layer each era so it
+    // sits above the parcels/POIs, and reapply the era filter for this era.
+    if (map.getSource('photos')) {
+      if (map.getLayer('photos-symbol')) map.removeLayer('photos-symbol');
+      const [eraStartYr, eraEndYr] = ERA_BOUNDS[idx];
+      map.addLayer({
+        id: 'photos-symbol',
+        type: 'symbol',
+        source: 'photos',
+        // photo [start,end] overlaps this era iff start <= eraEnd AND end >= eraStart
+        filter: ['all',
+          ['<=', ['get', 'start'], eraEndYr],
+          ['>=', ['get', 'end'], eraStartYr]
+        ],
+        layout: {
+          'icon-image': 'photo-marker',
+          'icon-rotate': ['coalesce', ['get', 'direction'], 0],
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.7, 17, 1.3, 20, 1.8]
+        }
+      });
     }
   }
 
@@ -790,6 +855,39 @@
     map.on('mouseenter', 'pois-circle', () => { map.getCanvas().style.cursor = 'pointer'; });
     map.on('mouseleave', 'pois-circle', () => { map.getCanvas().style.cursor = ''; });
 
+    // TIFF originals don't render in browsers; point at the CDN's web derivative instead.
+    function photoDisplayUrl(u) {
+      if (!u) return '';
+      const m = u.match(/^(https:\/\/cdn\.yesterdays\.maprva\.org\/images\/\d+)\/original\.tiff?$/i);
+      return m ? m[1] + '/1/transformed.webp' : u;
+    }
+
+    // Photo interactions — registered once
+    map.on('click', 'photos-symbol', (e) => {
+      const p = e.features[0].properties;
+      const coords = e.features[0].geometry.coordinates.slice();
+      const date = p.date ? ' \u00b7 ' + escapeHtml(p.date) : '';
+      const entry = p.img_entry || '';
+      const src = photoDisplayUrl(p.img_url);
+      const html =
+        '<p class="popup-label">Historic Photo' + date + '</p>' +
+        '<img class="photo-img" src="' + escapeHtml(src) + '" alt="Historic photo of 2nd Street" loading="lazy" ' +
+          'style="width:100%;max-width:260px;max-height:220px;object-fit:contain;border-radius:8px;display:block;margin:4px 0;background:#f0f0f0;">' +
+        (entry ? '<a href="' + escapeHtml(entry) + '" target="_blank" rel="noopener" style="font-size:12px;">View source \u2197</a>' : '');
+      const photoPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(coords).setHTML(html).addTo(map);
+      // Graceful fallback: if the image fails to load, hide it and show a note.
+      const imgEl = photoPopup.getElement().querySelector('img.photo-img');
+      if (imgEl) imgEl.addEventListener('error', () => {
+        imgEl.style.display = 'none';
+        const note = document.createElement('p');
+        note.style.cssText = 'font-size:12px;color:var(--color-text-secondary);margin:4px 0;';
+        note.textContent = 'Preview not available for this image \u2014 use the source link.';
+        imgEl.after(note);
+      });
+    });
+    map.on('mouseenter', 'photos-symbol', () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'photos-symbol', () => { map.getCanvas().style.cursor = ''; });
+
     // Basemap toggle
     document.querySelectorAll('.basemap-btn').forEach(btn => {
       btn.addEventListener('click', () => {
@@ -824,7 +922,16 @@
       eraButtonsEl.appendChild(btn);
     });
 
-    map.on('load', () => loadEra(currentEraIdx));
+    map.on('load', () => {
+      // Directional photo marker + one-time photos source (era filter applied in loadEra).
+      if (!map.hasImage('photo-marker')) {
+        map.addImage('photo-marker', makePhotoMarker(), { pixelRatio: 2 });
+      }
+      if (!map.getSource('photos')) {
+        map.addSource('photos', { type: 'geojson', data: PHOTOS_URL });
+      }
+      loadEra(currentEraIdx);
+    });
   }
 
 })();
