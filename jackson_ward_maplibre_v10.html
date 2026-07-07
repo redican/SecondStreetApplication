@@ -478,6 +478,7 @@
   const eras = [
     {
       id: '1885_1900', label: '1867 – 1887', title: 'Reconstruction & Rise',
+      sourceYear: 1891,
       blurb: 'In the decades after emancipation, 2nd Street emerged as the commercial spine of a thriving Black community. Banks, insurance offices, and theaters anchored the corridor.',
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/Mosaic1889Raster3/MapServer/tile/{z}/{y}/{x}',
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1867_1887_6_30.geojson',
@@ -485,6 +486,7 @@
     },
     {
       id: '1900_1925', label: '1888 – 1925', title: 'Black Wall Street',
+      sourceYear: 1925,
       blurb: "The peak of 2nd Street as a Black commercial and cultural center. Maggie Walker's St. Luke Penny Savings Bank, the True Reformer Hall, and a flourishing entertainment district drew visitors from across the South.",
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/SanbornBasemap1888_1925Era/MapServer/tile/{z}/{y}/{x}',
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1925_7_1.geojson',
@@ -492,6 +494,7 @@
     },
     {
       id: '1925_1950', label: '1926 – 1950', title: 'Harlem of the South',
+      sourceYear: 1950,
       blurb: 'The Hippodrome and other venues hosted Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson. Despite Jim Crow, 2nd Street thrived as a center of Black art, business, and nightlife.',
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/SanbornBasemap1925_1950EraLarger/MapServer/tile/{z}/{y}/{x}',
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1926_1950_6_25.geojson',
@@ -499,6 +502,7 @@
     },
     {
       id: '1950_1970', label: '1951 – 1964', title: 'Disruption',
+      sourceYear: 1960,
       blurb: "Construction of Interstate 95 (completed 1958) cut directly through Jackson Ward, displacing residents and severing the historic street grid. Urban renewal accelerated the decline of 2nd Street's commercial life.",
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/ZoningMap1951_1964Era/MapServer/tile/{z}/{y}/{x}',
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1951_1964_6_25.geojson',
@@ -506,6 +510,7 @@
     },
     {
       id: '1970_2000', label: '1965 – 1999', title: 'Decline & Disinvestment',
+      sourceYear: 1975,
       blurb: "Many historic buildings were demolished or fell into disrepair. The corridor lost its commercial anchor, though community institutions and longtime residents maintained the neighborhood's cultural memory.",
       tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/ZoningMap_1965to1999Era/MapServer/tile/{z}/{y}/{x}',
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1965_1999_7_01.geojson',
@@ -513,6 +518,7 @@
     },
     {
       id: '2000_today', label: '2000 – Today', title: 'Renewal & Remembrance',
+      sourceYear: 2025,
       blurb: 'Historic preservation efforts, a restored Hippodrome (2011), and new investment have changed the corridor again. Tensions around gentrification, displacement, and historical memory shape contemporary 2nd Street.',
       tileUrl: null,
       parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_2000_current_6_25.geojson',
@@ -840,7 +846,10 @@
       const id2level = (p.ID2level || '').trim();
       const displayName = name || useClass;
       let html = '';
-      html += '<p class="popup-label">' + (escapeHtml(address) || 'Address unknown') + '</p>';
+      html += '<p class="popup-label">' + 
+        (escapeHtml(address) || 'Address unknown') + 
+        (era.sourceYear ? ' <span style="opacity:0.6;">(' + era.sourceYear + ' directory)</span>' : '') +
+        '</p>';
       html += '<p class="popup-name">' + escapeHtml(displayName) + '</p>';
       html += '<span class="popup-use" style="background:' + useColor + '22;color:' + useColor + ';">' + escapeHtml(useClass) + '</span>';
       if (id2level) html += '<p class="popup-notes">' + escapeHtml(id2level) + '</p>';
