@@ -206,12 +206,37 @@
       text-align: center;
       transition: background 0.15s, border-color 0.15s, color 0.15s;
       line-height: 1.4;
+      position: relative;
+      animation: eraPulse 4.8s ease-in-out infinite;
+      animation-delay: calc(var(--pulse-order) * 0.55s);
+    }
+
+    .landing-era-btn:nth-child(1) { --pulse-order: 0; }
+    .landing-era-btn:nth-child(2) { --pulse-order: 1; }
+    .landing-era-btn:nth-child(3) { --pulse-order: 2; }
+    .landing-era-btn:nth-child(4) { --pulse-order: 3; }
+    .landing-era-btn:nth-child(5) { --pulse-order: 4; }
+    .landing-era-btn:nth-child(6) { --pulse-order: 5; }
+    
+    @keyframes eraPulse {
+      0%, 82%, 100% {
+        transform: scale(1);
+        border-color: var(--rule);
+        box-shadow: 0 0 0 rgba(192,74,30,0);
+      }
+      91% {
+        transform: scale(1.08);
+        border-color: var(--rust);
+        box-shadow: 0 0 0 5px rgba(192,74,30,0.16), 0 4px 14px rgba(192,74,30,0.28);
+      }
     }
 
     .landing-era-btn:hover {
       background: var(--ink);
       color: var(--cream);
       border-color: var(--ink);
+      animation-play-state: paused;
+      transform: scale(1.03);
     }
 
     .landing-era-btn .era-dates {
