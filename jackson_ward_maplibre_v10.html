@@ -391,27 +391,27 @@
       </p>
 
       <!-- visual key showing what the markers look like -->
-      <div class="howto-visuals" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:4px;">
+      <div class="howto-visuals" style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
 
-        <div style="text-align:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
           <img src="https://redican.github.io/SecondStreetApplication/POI_PIC.jpg"
                alt="Blue circle marker for historic sites"
-               style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:0.5px solid var(--rule);margin-bottom:6px;">
-          <span class="description" style="font-size:11px;line-height:1.4;display:block;">Blue circles mark important <strong>historic sites</strong> per era</span>
+               style="flex-shrink:0;width:48px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Blue circles mark <strong>historic sites</strong> — tap one for photos and the full story.</span>
         </div>
 
-        <div style="text-align:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
           <img src="https://redican.github.io/SecondStreetApplication/Parcel_PIC.jpg"
                alt="Colored building parcel example"
-               style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:0.5px solid var(--rule);margin-bottom:6px;">
-          <span class="description" style="font-size:11px;line-height:1.4;display:block;">Colored buildings show <strong>parcel use</strong></span>
+               style="flex-shrink:0;width:72px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Colored buildings show <strong>parcel use</strong> (commercial, residential, mixed use, vacant, institutional) — tap one for its address and business.</span>
         </div>
 
-        <div style="text-align:center;">
+        <div style="display:flex;align-items:center;gap:10px;">
           <img src="https://redican.github.io/SecondStreetApplication/YesterdaysPhotos_PIC.jpg"
-               alt="Orange/Black camera-direction marker for historic photos"
-               style="width:100%;aspect-ratio:1/1;object-fit:cover;border-radius:8px;border:0.5px solid var(--rule);margin-bottom:6px;">
-          <span class="description" style="font-size:11px;line-height:1.4;display:block;">Orange/Black markers are <strong>historic photos</strong> that makes it feel like you are touring the street in that time period</span>
+               alt="Orange camera-direction marker for historic photos"
+               style="flex-shrink:0;width:48px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Orange markers are <strong>historic photos</strong> — the cone shows which direction the camera faced.</span>
         </div>
 
       </div>
