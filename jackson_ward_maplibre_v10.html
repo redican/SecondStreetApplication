@@ -920,6 +920,8 @@
     });
     map.on('click', 'parcels-fill', (e) => {
       if (!e.features || !e.features.length) return;
+      const poiHits = map.queryRenderedFeatures(e.point, { layers: ['pois-circle'] });
+      if (poiHits.length > 0) return;
       const p = e.features[0].properties;
       const useClass = useClassLabel(p.Identification);
       const useColor = useClassColor(p.Identification);
