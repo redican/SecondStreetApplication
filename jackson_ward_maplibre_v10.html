@@ -675,6 +675,29 @@
     return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
   }
 
+  const erasHintShown = new Set();
+  
+  function showEraHint(text) {
+    const canvas = document.getElementById('map-canvas');
+    const existing = canvas.querySelector('.era-toast-hint');
+    if (existing) existing.remove(); // avoid stacking if user flips eras fast
+  
+    const el = document.createElement('div');
+    el.className = 'era-toast-hint';
+    el.textContent = text;
+    el.style.cssText = 'position:absolute;bottom:60px;left:50%;transform:translateX(-50%);' +
+      'background:rgba(0,0,0,0.75);color:#fff;font-size:11px;padding:6px 12px;' +
+      'border-radius:20px;z-index:5;pointer-events:none;opacity:0;' +
+      'transition:opacity 0.4s;white-space:nowrap;';
+    canvas.appendChild(el);
+  
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+    setTimeout(() => {
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 400);
+    }, 2200);
+  }
+
   // ── HISTORIC PHOTOS (MapRVA / Yesterday's Richmond) ──
   // Points carry a camera bearing (direction) and an `eras` array assigning each
   // photo to every era its date range overlaps. Update this URL to your uploaded file.
@@ -830,6 +853,13 @@
       });
     }
   }
+
+  if (!erasHintShown.has(era.id) && era.parcelsUrl) {
+    erasHintShown.add(era.id);
+    // slight delay so it doesn't collide with the map-hint banner or tile load
+    setTimeout(() => showEraHint('Tap a building for details'), 500);
+  }
+}
 
   function initMap() {
     map = new maplibregl.Map({
