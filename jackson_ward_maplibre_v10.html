@@ -739,10 +739,11 @@
   function showPoiInfo(properties) {
     const imagePath = String(properties.Image1 || '').replace(/^images\//i, '').trim();
     const imageUrl = imagePath ? 'https://redican.github.io/SecondStreetApplication/' + imagePath : '';
+    const address = (properties.Address || '').trim();
     const panel = document.getElementById('poi-info');
     panel.innerHTML =
       '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">' +
-        '<p class="popup-label" style="margin:0;">Historic Site</p>' +
+        '<p class="popup-label" style="margin:0;">Historic Site' + (address ? ' · ' + escapeHtml(address) : '') + '</p>' +
         '<button id="poi-close-btn" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--color-text-tertiary);line-height:1;padding:0;">\u2715</button>' +
       '</div>' +
       (imageUrl ? '<img src="' + imageUrl + '" alt="' + escapeHtml(properties.Name) + '" style="width:100%;max-height:240px;object-fit:cover;border-radius:8px;margin-bottom:12px;">' : '') +
@@ -942,8 +943,9 @@
     // POI interactions — registered once
     map.on('click', 'pois-circle', (e) => {
       const p = e.features[0].properties;
+      const address = (p.Address || '').trim();
       const html =
-        '<p class="popup-label">Historic Site</p>' +
+        '<p class="popup-label">Historic Site' + (address ? ' · ' + escapeHtml(address) : '') + '</p>' +
         '<p class="popup-name">' + escapeHtml(p.Name) + '</p>' +
         '<p class="popup-notes">' + escapeHtml(p.WhyShort) + '</p>' +
         '<button id="learn-more-btn" style="margin-top:8px;background:#1a73e8;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">Learn More \u2192</button>';
