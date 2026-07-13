@@ -935,6 +935,7 @@
     // POI interactions — registered once
     map.on('click', 'pois-circle', (e) => {
       const p = e.features[0].properties;
+      const address = poiAddressLookup[p.Name] || '';
       const html =
         '<p class="popup-label">Historic Site' + (address ? ' · ' + escapeHtml(address) : '') + '</p>' +
         '<p class="popup-name">' + escapeHtml(p.Name) + '</p>' +
