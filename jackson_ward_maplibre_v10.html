@@ -429,10 +429,13 @@
         <p class="description" style="margin-bottom:14px;">
           This project highlights changes on Second Street from 1867 to 2025. Second Street was important to the development of Jackson Ward, which was originally created in the 1870s as a voting district specifically to disenfranchise the Black voters of Richmond. But even with these unpleasant origins, the Black community of Jackson Ward made this place their own. Seeing a need for economic independence, Black residents began forming businesses and social clubs along Second Street. And even through major changes like the construction of I-95 and desegregation, it's always been home to Black entrepreneurship, community, and arts. Throughout this project we hope to highlight and celebrate the people, businesses, and institutions that have shaped the Jackson Ward community and the city of Richmond as a whole over these 160 years.
         </p>
-        <p class="story-label">Thanks</p>
-        <p class="description">
-          With gratitude to the the Historic Jackson Ward Association, University of Richmond, Virginia Commonwealth University, the Black History Museum &amp; Cultural Center of Virginia, and Richmond Public Library for helping in the creation of this project.
+        <p class="story-label">Acknowledgments</p>
+        <p class="description" style="margin-bottom:12px;">
+          This project would not exist without the institutions, archives, and people who shared their time and expertise.
         </p>
+        <button id="ack-open-btn" style="background:none;border:1px solid var(--rule);padding:8px 14px;font-family:var(--font-sans);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);cursor:pointer;">
+          View full acknowledgments &rarr;
+        </button>
       </div>
     </details>
 
@@ -444,6 +447,41 @@
   </div>
 </div>
 
+<!-- ══════════════════════════════════════════
+     ACKNOWLEDGMENTS PAGE
+══════════════════════════════════════════ -->
+<div id="acknowledgments" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 60px;">
+  <div class="landing-card">
+    <div class="card-header">
+      <h1 class="card-title">Acknowledg<em>ments</em></h1>
+      <p class="card-subtitle">With thanks to everyone who made this project possible</p>
+    </div>
+
+    <div class="card-body">
+      <p class="story-label">Institutional Partners</p>
+      <p class="description" style="margin-bottom:16px;">
+        Historic Jackson Ward Association &middot; University of Richmond &middot; Virginia Commonwealth University &middot; Black History Museum &amp; Cultural Center of Virginia &middot; Richmond Public Library
+      </p>
+
+      <p class="story-label">Archives &amp; Data</p>
+      <p class="description" style="margin-bottom:16px;">
+        Spatial Analysis Lab, University of Richmond (historical basemaps) &middot; MapRVA / Yesterday's Richmond photo archive &middot; OpenStreetMap contributors
+      </p>
+
+      <p class="story-label">Project Team</p>
+      <p class="description" style="margin-bottom:16px;">
+        <!-- add individual names here -->
+      </p>
+    </div>
+
+    <div class="card-footer">
+      <span class="card-footer-text">Thank you</span>
+      <button id="ack-back-btn" style="background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:6px 12px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:var(--font-sans);">&larr; Back</button>
+    </div>
+  </div>
+</div>
+
+  
 <!-- ══════════════════════════════════════════
      MAP APP
 ══════════════════════════════════════════ -->
@@ -603,6 +641,16 @@
   
     landingGrid.appendChild(btn);
   });
+
+  // ── ACKNOWLEDGMENTS ROUTING ──
+  document.getElementById('ack-open-btn').addEventListener('click', () => {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('acknowledgments').style.display = 'flex';
+  });
+  document.getElementById('ack-back-btn').addEventListener('click', () => {
+    document.getElementById('acknowledgments').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+  });  
 
   // ── SHOW / HIDE MAP ──
   function showMap() {
