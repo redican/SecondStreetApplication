@@ -929,6 +929,8 @@
       if (map.getLayer('photos-symbol')) map.removeLayer('photos-symbol');
       const [eraStartYr, eraEndYr] = ERA_BOUNDS[idx];
       const markerImage = idx < 3 ? 'photo-marker-black' : 'photo-marker-orange';
+      const markerColor = idx < 3 ? '#1a1a1a' : '#E08F2A';
+      document.getElementById('photos-toggle-dot').style.background = photosVisible ? markerColor : '#c9c9c9';
       map.addLayer({
         id: 'photos-symbol',
         type: 'symbol',
@@ -1119,10 +1121,11 @@
       }
       photosToggleBtn.setAttribute('aria-pressed', photosVisible ? 'true' : 'false');
       photosToggleBtn.style.opacity = photosVisible ? '1' : '0.65';
-      document.getElementById('photos-toggle-dot').style.background = photosVisible ? '#E08F2A' : '#c9c9c9';
+      const currentMarkerColor = currentEraIdx < 3 ? '#1a1a1a' : '#E08F2A';
+      document.getElementById('photos-toggle-dot').style.background = photosVisible ? currentMarkerColor : '#c9c9c9';
       document.getElementById('photos-toggle-label').textContent = photosVisible ? 'Photos' : 'Photos off';
     });
-
+    
     // Basemap toggle
     document.querySelectorAll('.basemap-btn').forEach(btn => {
       btn.addEventListener('click', () => {
