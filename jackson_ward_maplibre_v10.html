@@ -735,6 +735,7 @@
 
   let legendCollapsed = false;
   let preZoomView = null;
+  let currentPopup = null;
   
   function setLegendCollapsed(collapsed) {
     legendCollapsed = collapsed;
@@ -866,6 +867,10 @@
 
   function loadEra(idx) {
     currentEraIdx = idx;
+    if (currentPopup) {           
+      currentPopup.remove();
+      currentPopup = null;
+    }
     const era = eras[idx];
 
     document.getElementById('basemap-toggle').style.display = era.tileUrl ? 'flex' : 'none';
@@ -1036,7 +1041,7 @@
       html += '<p class="popup-name">' + escapeHtml(displayName) + '</p>';
       html += '<span class="popup-use" style="background:' + useColor + '22;color:' + useColor + ';">' + escapeHtml(useClass) + '</span>';
       if (id2level) html += '<p class="popup-notes">' + escapeHtml(id2level) + '</p>';
-      new maplibregl.Popup({ closeButton: true, maxWidth: '260px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      currentPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '260px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
     });
 
     // POI interactions — registered once
@@ -1049,6 +1054,7 @@
         '<p class="popup-notes">' + escapeHtml(p.WhyShort) + '</p>' +
         '<button id="learn-more-btn" style="margin-top:8px;background:#1a73e8;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">Learn More \u2192</button>';
       const poiPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      currentPopup = poiPopup;
       setTimeout(() => {
         const btn = document.getElementById('learn-more-btn');
         if (!btn) return;
@@ -1086,7 +1092,7 @@
           'style="width:100%;max-width:260px;max-height:220px;object-fit:contain;border-radius:8px;display:block;margin:4px 0;background:#f0f0f0;">' +
         (entry ? '<a href="' + escapeHtml(entry) + '" target="_blank" rel="noopener" style="font-size:12px;">View source \u2197</a>' : '');
       const photoPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(coords).setHTML(html).addTo(map);
-      const popupEl = photoPopup.getElement();
+      currentPopup = photoPopup;
       // Graceful fallback: if the image fails to load, hide it and show a note.
       const imgEl = popupEl.querySelector('img.photo-img');
       if (imgEl) imgEl.addEventListener('error', () => {
