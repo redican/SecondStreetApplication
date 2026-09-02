@@ -1,0 +1,1168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>2nd Street Through Time</title>
+
+  <link href="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.css" rel="stylesheet" />
+  <script src="https://unpkg.com/maplibre-gl@4.7.1/dist/maplibre-gl.js"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=IM+Fell+English:ital@0;1&family=Inter:wght@300;400;500&display=swap" rel="stylesheet" />
+
+  
+  <style>
+    :root {
+      --cream: #ffffff;
+      --ink: #1c1810;
+      --ink-light: #4a4438;
+      --ink-faint: #9a9080;
+      --rust: #c04a1e;
+      --rule: #c8bfaa;
+      --color-background-primary: #ffffff;
+      --color-background-secondary: #f5f5f5;
+      --color-background-tertiary: #ebebeb;
+      --color-background-info: #e8f0fe;
+      --color-text-primary: #1a1a1a;
+      --color-text-secondary: #555555;
+      --color-text-tertiary: #999999;
+      --color-text-info: #1a73e8;
+      --color-border-tertiary: #dedede;
+      --color-border-info: #a8c5f7;
+      --border-radius-lg: 12px;
+      --border-radius-md: 8px;
+      --font-sans: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #ffffff;
+      font-family: var(--font-sans);
+      min-height: 100vh;
+    }
+
+    /* ── LANDING PAGE ── */
+    #landing {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 40px 20px 60px;
+    }
+
+    .landing-card {
+      width: 100%;
+      max-width: 480px;
+      background: var(--cream);
+      border: 1px solid var(--rule);
+      box-shadow: 0 2px 40px rgba(0,0,0,0.18), 0 1px 4px rgba(0,0,0,0.1);
+    }
+
+    .landing-card::before {
+      content: '';
+      display: block;
+      height: 4px;
+      background: var(--ink);
+    }
+
+    .card-header {
+      padding: 28px 28px 22px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .eyebrow {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      font-weight: 500;
+      letter-spacing: 0.18em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      margin-bottom: 10px;
+    }
+
+    .card-title {
+      font-family: 'Playfair Display', serif;
+      font-size: 38px;
+      font-weight: 900;
+      line-height: 1.0;
+      color: var(--ink);
+      letter-spacing: -0.01em;
+    }
+
+    .card-title em {
+      font-style: italic;
+      color: var(--rust);
+    }
+
+    .card-subtitle {
+      font-family: var(--font-sans);
+      font-size: 11px;
+      color: var(--ink-faint);
+      margin-top: 8px;
+      letter-spacing: 0.04em;
+    }
+
+    .card-body {
+      padding: 20px 28px 24px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .rule-ornament {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .rule-ornament::before,
+    .rule-ornament::after {
+      content: '';
+      flex: 1;
+      height: 0.5px;
+      background: var(--rule);
+    }
+    .rule-ornament span {
+      font-size: 12px;
+      color: var(--rule);
+    }
+
+    .description {
+      font-family: 'IM Fell English', serif;
+      font-size: 14px;
+      line-height: 1.75;
+      color: var(--ink-light);
+    }
+
+    .description strong {
+      font-weight: 700;
+      color: var(--ink);
+    }
+
+    .story-label {
+      font-family: var(--font-sans);
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--rust);
+      font-weight: 500;
+      margin-bottom: 6px;
+    }
+    .story-details {
+      border-bottom: 1px solid var(--rule);
+      padding: 0 28px;
+    }
+    .story-summary {
+      list-style: none;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      padding: 14px 0;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      color: var(--ink-faint);
+      font-weight: 500;
+    }
+    .story-summary::-webkit-details-marker { display: none; }
+    .story-summary svg {
+      width: 11px;
+      height: 11px;
+      color: var(--ink-faint);
+      transition: transform 0.2s ease;
+    }
+    .story-details[open] .story-summary svg { transform: rotate(180deg); }
+    .story-content { padding-bottom: 18px; }
+
+    .card-eras {
+      padding: 18px 28px 24px;
+      border-bottom: 1px solid var(--rule);
+    }
+
+    .eras-label {
+      font-size: 9px;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--ink-faint);
+      margin-bottom: 12px;
+      font-weight: 500;
+    }
+
+    .era-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .landing-era-btn {
+      background: none;
+      border: 1px solid var(--rule);
+      padding: 10px 6px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 10px;
+      color: var(--ink-light);
+      text-align: center;
+      transition: background 0.15s, border-color 0.15s, color 0.15s;
+      line-height: 1.4;
+      position: relative;
+      animation: eraPulse 4.8s ease-in-out infinite;
+      animation-delay: calc(var(--pulse-order) * 0.55s);
+    }
+
+    .landing-era-btn:nth-child(1) { --pulse-order: 0; }
+    .landing-era-btn:nth-child(2) { --pulse-order: 1; }
+    .landing-era-btn:nth-child(3) { --pulse-order: 2; }
+    .landing-era-btn:nth-child(4) { --pulse-order: 3; }
+    .landing-era-btn:nth-child(5) { --pulse-order: 4; }
+    .landing-era-btn:nth-child(6) { --pulse-order: 5; }
+    
+    @keyframes eraPulse {
+      0%, 82%, 100% {
+        transform: scale(1);
+        border-color: var(--rule);
+        box-shadow: 0 0 0 rgba(192,74,30,0);
+      }
+      91% {
+        transform: scale(1.08);
+        border-color: var(--rust);
+        box-shadow: 0 0 0 5px rgba(192,74,30,0.16), 0 4px 14px rgba(192,74,30,0.28);
+      }
+    }
+
+    .landing-era-btn:hover {
+      background: var(--ink);
+      color: var(--cream);
+      border-color: var(--ink);
+      animation-play-state: paused;
+      transform: scale(1.03);
+    }
+
+    .landing-era-btn .era-dates {
+      display: block;
+      font-size: 11px;
+      font-weight: 500;
+      margin-bottom: 2px;
+    }
+
+    .landing-era-btn .era-name {
+      display: block;
+      font-size: 9px;
+      opacity: 0.7;
+    }
+
+
+    .card-footer {
+      padding: 10px 28px;
+      background: var(--ink);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .card-footer-text {
+      font-size: 9px;
+      color: rgba(255,255,255,0.4);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+    }
+
+    /* ── MAP APP ── */
+    #app {
+      display: none;
+      padding: 20px;
+      justify-content: center;
+    }
+
+    /* ── MAP WIDGET STYLES ── */
+    .maplibregl-popup-content {
+      padding: 12px 14px;
+      border-radius: 8px;
+      font-family: var(--font-sans);
+      max-width: 240px;
+    }
+
+    .maplibregl-popup-close-button {
+      font-size: 22px;
+      width: 28px;
+      height: 28px;
+      line-height: 28px;
+      padding: 0;
+      color: var(--color-text-secondary);
+    }
+    
+    .maplibregl-popup-close-button:hover {
+      background: var(--color-background-secondary);
+      color: var(--color-text-primary);
+    }
+    
+    .popup-label {
+      font-size: 10px;
+      color: var(--color-text-tertiary);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      margin: 0 0 4px 0;
+      padding-right: 20px;
+    }
+    .popup-name {
+      font-size: 14px;
+      font-weight: 500;
+      color: var(--color-text-primary);
+      margin: 0 0 4px 0;
+      line-height: 1.3;
+    }
+    .popup-use {
+      display: inline-block;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 10px;
+      font-weight: 500;
+    }
+    .popup-notes {
+      font-size: 11px;
+      color: var(--color-text-secondary);
+      margin: 8px 0 0 0;
+      font-style: italic;
+    }
+    .era-btn {
+      padding: 10px 6px;
+      font-size: 11px;
+      background: var(--color-background-primary);
+      border: 0.5px solid var(--color-border-tertiary);
+      border-radius: var(--border-radius-md);
+      cursor: pointer;
+      color: var(--color-text-secondary);
+      font-family: var(--font-sans);
+      min-height: 44px;
+      transition: background 0.15s ease, color 0.15s ease;
+    }
+    .era-btn.active {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      border-color: var(--color-border-info);
+      font-weight: 500;
+    }
+    .era-btn.disabled { opacity: 0.6; }
+    .basemap-btn {
+      border: 0;
+      padding: 8px 12px;
+      cursor: pointer;
+      font-family: var(--font-sans);
+      font-size: 11px;
+      background: transparent;
+      color: var(--color-text-secondary);
+    }
+    .basemap-btn.active {
+      background: var(--color-background-info);
+      color: var(--color-text-info);
+      font-weight: 500;
+    }
+    .basemap-btn + .basemap-btn {
+      border-left: 0.5px solid var(--color-border-tertiary);
+    }
+    
+    #legend { transition: padding 0.18s ease; }
+    #legend.collapsed { padding: 6px 8px; cursor: pointer; }
+    #legend.collapsed:hover { background: var(--color-background-secondary); }
+    #legend-header { display: flex; align-items: center; justify-content: space-between; gap: 10px; cursor: pointer; }
+    #legend-toggle-btn {
+      background: none; border: none; padding: 2px; margin: 0 0 0 2px; cursor: pointer;
+      color: var(--color-text-tertiary); display: flex; align-items: center; justify-content: center; line-height: 1;
+    }
+    #legend-toggle-btn svg { width: 12px; height: 12px; transition: transform 0.18s ease; }
+    #legend.collapsed #legend-toggle-btn svg { transform: rotate(180deg); }
+    #legend.collapsed #legend-body { display: none; }
+    
+  </style>
+</head>
+<body>
+
+<!-- ══════════════════════════════════════════
+     LANDING PAGE
+══════════════════════════════════════════ -->
+<div id="landing">
+  <div class="landing-card">
+
+    <div class="card-header">
+      <h1 class="card-title">The Deuce & Detours:<br><em>2nd Street's Journey</em></h1>
+      <p class="card-subtitle">Jackson Ward, Richmond, Virginia &nbsp;·&nbsp; 1867 - Present</p>
+    </div>
+
+    <div class="card-eras">
+      <p class="eras-label">Jump to an era - or explore from the beginning</p>
+      <!-- add: -->
+      <p class="description" style="font-size:11px;margin-top:-4px;margin-bottom:14px;color:var(--ink-faint);">Tap any era below to open the interactive map for that period.</p>
+      <div class="era-grid" id="landing-era-grid"></div>
+    </div>
+
+    <div class="card-body">
+      <div class="rule-ornament"><span>✦</span></div>
+    
+      <p class="story-label">Mini History</p>
+      <p class="description" style="margin-bottom:16px;">
+        North Second Street was an important street for African Americans from the late 19th century to the 1950s. Many know it as the <strong>"Black Wall Street"</strong> of the South, when it contained some of the first Black-owned banks and insurance companies in the 1910s. Second Street then became a central cultural site; the Hippodrome and the Eggleston Hotel invited nationally renowned Black artists to spend time in Jackson Ward. In the late 1950s and early '60s, I-95 cut through the street's 800 block. Desegregation enabled Black people to shop at any business of their choosing - but led business away from Second Street. This led to a couple decades of economic decline. However, in recent years the street has been making a comeback as new businesses and respect for the neighborhood's rich history begin to fill up vacant storefronts.
+      </p>
+    
+      <p class="story-label">How It Works</p>
+      <p class="description" style="margin-bottom:14px;">
+        This 145-year period on North Second Street is grouped into six eras marking major changes. Click an era to see the buildings and interact with the map by clicking a building. Important sites are marked with a blue dot and contain more history.
+      </p>
+
+      <!-- visual key showing what the markers look like -->
+      <div class="howto-visuals" style="display:flex;flex-direction:column;gap:12px;margin-top:4px;">
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="https://redican.github.io/SecondStreetApplication/POI_PIC.jpg"
+               alt="Blue circle marker for historic sites"
+               style="flex-shrink:0;width:48px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Blue circles mark <strong>historic sites</strong> - tap one for photos and the full story.</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="https://redican.github.io/SecondStreetApplication/Parcel_PIC.jpg"
+               alt="Colored building parcel example"
+               style="flex-shrink:0;width:130px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Colored buildings show <strong>parcel use</strong> (commercial, residential, mixed use, vacant, institutional) - tap one for its address and business.</span>
+        </div>
+
+        <div style="display:flex;align-items:center;gap:10px;">
+          <img src="https://redican.github.io/SecondStreetApplication/YesterdaysPhotos_PIC.jpg"
+               alt="Orange/Black camera-direction marker for historic photos"
+               style="flex-shrink:0;width:48px;height:48px;object-fit:cover;border-radius:6px;border:0.5px solid var(--rule);">
+          <span class="description" style="font-size:12px;line-height:1.4;">Orange/Black markers are <strong>historic photos</strong> - the cone shows which direction the camera faced.</span>
+        </div>
+
+      </div>
+
+    </div>
+      
+    <details class="story-details">
+      <summary class="story-summary">
+        <span>Why This Project</span>
+        <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </summary>
+      <div class="story-content">
+        <p class="description" style="margin-bottom:14px;">
+          This project highlights changes on Second Street from 1867 to 2025. Second Street was important to the development of Jackson Ward, which was originally created in the 1870s as a voting district specifically to disenfranchise the Black voters of Richmond. But even with these unpleasant origins, the Black community of Jackson Ward made this place their own. Seeing a need for economic independence, Black residents began forming businesses and social clubs along Second Street. And even through major changes like the construction of I-95 and desegregation, it's always been home to Black entrepreneurship, community, and arts. Throughout this project we hope to highlight and celebrate the people, businesses, and institutions that have shaped the Jackson Ward community and the city of Richmond as a whole over these 160 years.
+        </p>
+        <p class="story-label">Acknowledgments</p>
+        <p class="description" style="margin-bottom:12px;">
+          This project would not exist without the institutions, archives, and people who shared their time and expertise.
+        </p>
+        <button id="ack-open-btn" style="background:none;border:1px solid var(--rule);padding:8px 14px;font-family:var(--font-sans);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink);cursor:pointer;">
+          View full acknowledgments &rarr;
+        </button>
+      </div>
+    </details>
+
+    <div class="card-footer">
+      <span class="card-footer-text">Student Research Project &nbsp;·&nbsp; 2025</span>
+      <span class="card-footer-text">Prototype</span>
+    </div>
+
+  </div>
+</div>
+
+<!-- ══════════════════════════════════════════
+     ACKNOWLEDGMENTS PAGE
+══════════════════════════════════════════ -->
+<div id="acknowledgments" style="display:none;min-height:100vh;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px 60px;">
+  <button id="ack-back-btn-top" style="align-self:flex-start;max-width:480px;width:100%;margin:0 auto 10px;background:none;border:none;padding:0;font-family:var(--font-sans);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:var(--ink-faint);cursor:pointer;text-align:left;">
+    &larr; Back
+  </button>
+  <div class="landing-card">
+    <div class="card-header">
+      <h1 class="card-title">Acknowledg<em>ments</em></h1>
+      <p class="card-subtitle">With thanks to everyone who made this project possible</p>
+    </div>
+
+    <div class="card-body">
+      <p class="story-label">Institutional Partners</p>
+      <p class="description" style="margin-bottom:16px;">
+        Historic Jackson Ward Association &middot; University of Richmond &middot; Virginia Commonwealth University &middot; Black History Museum &amp; Cultural Center of Virginia &middot; Richmond Public Library
+      </p>
+
+      <p class="story-label">Archives &amp; Data</p>
+      <p class="description" style="margin-bottom:16px;">
+        Spatial Analysis Lab, University of Richmond (historical basemaps) &middot; MapRVA / Yesterday's Richmond photo archive &middot; OpenStreetMap contributors
+      </p>
+
+      <p class="story-label">Student Researchers &amp; Interns</p>
+      <p class="description" style="margin-bottom:16px;">
+        <strong>Anna Krzyzanowski</strong>, <strong>Ekram Bamud</strong>, <strong>Donovan Murray</strong> (A&amp;S Summer Research Fellows, University of Richmond),  <strong>Priscilla Okobea Arko</strong> and <strong>Basil Forrest</strong> (Summer Interns, Virginia Commonwealth University) conducted historical research, data collection, mapping for the project,<br>
+        and fieldwork over the summer.
+      </p>
+
+      <p class="story-label">Project Leadership</p>
+      <p class="description" style="margin-bottom:16px;">
+        <strong>Dr. Kyle Redican</strong> (Professor, University of Richmond / University of Florida) led the project overall.<br>
+        <strong>Janis Allen</strong> (President, Historic Jackson Ward Association) served as community lead, connecting the project to Jackson Ward residents and history.<br>
+        <strong>Verenda K. Cobbs</strong> (Senior Manager for Civic Innovation and Partnerships, VCU) served as VCU lead, coordinating the university's involvement.
+      </p>
+
+      <p class="story-label">Faculty &amp; Staff Support</p>
+      <p class="description" style="margin-bottom:16px;">
+        <strong>Dr. Jacqueline Smith-Mason</strong> (Associate Dean and Director of Academic and Faculty Affairs, VCU Honors College) and <strong>Challen Wellington</strong> (Community Engaged Educator, VCU Honors College) supported the project's academic and community-engagement structure.<br>
+        <strong>Dr. Brian J. Daugherity</strong> (Professor of History and Director of Internships, VCU Department of History) helped connect student interns to the project.<br>
+        <strong>Tani Washington</strong> served as Program Coordinator.<br>
+        <strong>Dr. Jillean McCommons</strong> and <strong>Dr. Tom Shields</strong> (Professors, University of Richmond) provided faculty guidance and oversight.<br>
+        <strong>Beth Zizzamia</strong> (GIS Operations Manager, University of Richmond) supported the GIS and mapping work behind the interactive maps. <br>
+        <strong>Dr. Derek Miller</strong> (Associate Director of Community Engaged-Research, Scholarship, and Relationships, University of Richmond Bonner Center for Civic Engagement) provided institutional support for this work.
+      </p>
+
+      <p class="story-label">Community &amp; Institutional Partners</p>
+      <p class="description" style="margin-bottom:16px;">
+        <strong>Jacob Hall</strong> (MapRVA / Yesterdays.MapRVA) provided access to the historic photo archive used throughout the map.<br>
+        <strong>Marvin Hicks</strong> (Memory Lab Fellow, Richmond Public Library) supported archival research and preservation resources.<br>
+        <strong>Mary Lauderdale</strong> (Director of Collections, Black History Museum and Cultural Center of Virginia) provided context and support throughout the project. <br>
+        <strong>LaJuan Neal</strong> (Planner, City of Richmond) offered planning and municipal context for the project.
+      </p>
+    </div>
+
+    <div class="card-footer">
+      <span class="card-footer-text">Thank you</span>
+      <button id="ack-back-btn" style="background:none;border:1px solid rgba(255,255,255,0.3);color:#fff;padding:6px 12px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;cursor:pointer;font-family:var(--font-sans);">&larr; Back</button>
+    </div>
+  </div>
+</div>
+
+  
+<!-- ══════════════════════════════════════════
+     MAP APP
+══════════════════════════════════════════ -->
+<div id="app">
+  <div id="kiosk-root" style="width:100%;max-width:480px;margin:0 auto;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-lg);overflow:hidden;">
+
+    <div style="padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);display:flex;justify-content:space-between;align-items:center;">
+      <div>
+        <h2 style="font-size:18px;font-weight:500;margin:0 0 2px 0;">2nd Street Through Time</h2>
+        <p style="font-size:12px;color:var(--color-text-secondary);margin:0;">Jackson Ward, Richmond</p>
+        <p id="map-attribution" style="font-size:9px;color:var(--color-text-tertiary);margin:4px 0 0 0;">
+          © OpenStreetMap contributors · MapLibre
+        </p>
+      </div>
+      <button id="back-btn" style="background:none;border:1px solid var(--color-border-tertiary);border-radius:6px;padding:6px 10px;font-size:11px;cursor:pointer;color:var(--color-text-secondary);font-family:var(--font-sans);">&larr; Back</button>
+    </div>
+
+    <div id="map-canvas" style="position:relative;width:100%;height:480px;background:var(--color-background-tertiary);">
+      <div id="map" style="position:absolute;top:0;left:0;width:100%;height:100%;"></div>
+
+      <div style="position:absolute;top:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:6px 10px;font-size:12px;z-index:2;">
+        <span style="color:var(--color-text-secondary);">Era:</span>
+        <span id="era-label-pill" style="font-weight:500;margin-left:4px;">1926 – 1950</span>
+      </div>
+
+      <div id="basemap-placeholder" style="display:none;position:absolute;top:0;left:0;width:100%;height:100%;z-index:1;background:repeating-linear-gradient(45deg,#e8e3d6,#e8e3d6 10px,#dfd9c7 10px,#dfd9c7 20px);align-items:center;justify-content:center;text-align:center;padding:20px;flex-direction:column;pointer-events:none;">
+        <div style="background:rgba(255,255,255,0.92);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:14px 18px;max-width:80%;">
+          <p style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;">Basemap in production</p>
+          <p id="placeholder-era-label" style="font-size:13px;color:var(--color-text-primary);margin:0 0 4px 0;font-weight:500;">era label</p>
+          <p style="font-size:11px;color:var(--color-text-secondary);margin:0;line-height:1.5;">Students are georeferencing the historical maps for this era. Modern basemap shown below for reference.</p>
+        </div>
+      </div>
+
+      <div id="legend" style="position:absolute;bottom:10px;left:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);padding:8px 10px;font-size:11px;z-index:2;line-height:1.5;">
+        <div id="legend-header">
+          <p id="legend-title" style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0;font-weight:500;">Parcel use</p>
+          <button id="legend-toggle-btn" aria-label="Toggle legend" title="Toggle legend">
+            <svg viewBox="0 0 12 12" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M2.5 4.5L6 8L9.5 4.5" stroke="currentColor" stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+        </div>
+        <div id="legend-body">
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#D85A30;border-radius:2px;"></span>Commercial</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#4A7A9B;border-radius:2px;"></span>Residential</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#8B6F9A;border-radius:2px;"></span>Mixed use</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#B0B0B0;border-radius:2px;"></span>Vacant</div>
+          <div style="display:flex;align-items:center;gap:6px;"><span style="display:inline-block;width:12px;height:12px;background:#6B8E23;border-radius:2px;"></span>Institutional</div>
+        </div>
+      </div>
+
+      <div id="basemap-toggle" style="position:absolute;top:10px;right:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;z-index:2;overflow:hidden;display:flex;">
+        <button data-mode="modern" class="basemap-btn">Modern</button>
+        <button data-mode="historical" class="basemap-btn active">Historical</button>
+      </div>
+
+      <button id="photos-toggle" aria-pressed="true" style="position:absolute;top:46px;right:10px;background:var(--color-background-primary);border:0.5px solid var(--color-border-tertiary);border-radius:var(--border-radius-md);font-size:11px;z-index:2;padding:6px 10px;cursor:pointer;display:flex;align-items:center;gap:6px;color:var(--color-text-secondary);font-family:var(--font-sans);">
+        <span id="photos-toggle-dot" style="display:inline-block;width:9px;height:9px;border-radius:50%;background:#E08F2A;"></span>
+        <span id="photos-toggle-label">Photos</span>
+      </button>
+    </div>
+
+    <div id="map-hint" style="padding:10px 16px;background:#e8f0fe;border-bottom:0.5px solid #a8c5f7;display:flex;align-items:center;justify-content:space-between;gap:10px;">
+      <p style="font-size:11px;color:#1a73e8;margin:0;line-height:1.5;">
+        🔷 <strong>Scroll up on the map</strong> and tap a <strong>blue circle</strong> for historic sites &nbsp;·&nbsp; Tap any <strong>colored building</strong> for details &nbsp;·&nbsp; Click on an era below the era overview to <strong>change eras</strong>
+      </p>
+      <button onclick="document.getElementById('map-hint').style.display='none'" style="background:none;border:none;cursor:pointer;font-size:14px;color:#1a73e8;padding:0;line-height:1;">✕</button>
+    </div>
+    
+    <div id="era-info" style="padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);">
+      <p style="font-size:10px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 4px 0;">Era overview</p>
+      <h3 id="era-title" style="font-size:16px;font-weight:500;margin:0 0 6px 0;">Harlem of the South</h3>
+      <p id="era-blurb" style="font-size:12px;line-height:1.55;color:var(--color-text-secondary);margin:0;">The Hippodrome and other venues hosted Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson. Despite Jim Crow, 2nd Street thrived as a center of Black art, business, and nightlife.</p>
+    </div>
+
+    <div id="poi-info" style="display:none;padding:14px 16px;border-bottom:0.5px solid var(--color-border-tertiary);background:var(--color-background-primary);"></div>
+
+    <div style="padding:12px 16px;background:var(--color-background-secondary);">
+      <p style="font-size:9px;color:var(--color-text-tertiary);text-transform:uppercase;letter-spacing:0.06em;margin:0 0 8px 0;font-weight:500;">Choose an era</p>
+      <div id="era-buttons" style="display:grid;grid-template-columns:repeat(3,1fr);gap:6px;"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+(function(){
+
+  const eras = [
+    {
+      id: '1885_1900', label: '1867 - 1887', title: 'Reconstruction & Rise',
+      sourceYear: 1891,
+      blurb: 'In the 19th century, neighborhoods north of Broad Street were the homes of anyone deemed non-white - immigrants and newly emancipated Black families lived side by side. 2nd Street became the center of one of these neighborhoods, Jackson Ward. The street was mostly single-family homes and some small businesses. Nearby Black churches and the A. D. Price funeral home fostered Jackson Ward's community identity.',
+      tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/Mosaic1889Raster3/MapServer/tile/{z}/{y}/{x}',
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1867_1887_6_30.geojson',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POI_1867_1887_Address.geojson',
+    },
+    {
+      id: '1900_1925', label: '1888 - 1925', title: 'Black Wall Street',
+      sourceYear: 1925,
+      blurb: "As a new century dawned, 2nd Street emerged as the commercial spine of a thriving Black community. In response to Jim Crow laws, entrepreneurs started banks and insurance companies that localized Black spendings. Right off 2nd Street on Leigh Street, "Quality Row" displayed the wealth within the community. Hotels, restaurants, and the Hippodrome Theater drew visitors from across the south to this new Black Wall Street.",
+      tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/SanbornBasemap1888_1925Era/MapServer/tile/{z}/{y}/{x}',
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1888_1925_727Fix.json',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POIS_1888_1925_Address.geojson',
+    },
+    {
+      id: '1925_1950', label: '1926 - 1950', title: 'Harlem of the South',
+      sourceYear: 1950,
+      blurb: 'By this time, 2nd Street had been transformed from a residential neighborhood into an established commercial corridor. Black-owned banks had attracted customers and built up community wealth-forming a strong artistic and cultural center. By the 1950s, 2nd Street was known as the Harlem of the South. Cafes, hotels, billiards clubs, and other shops made 2nd Street the place to be - and not just for local residents! Duke Ellington, Cab Calloway, and Bill "Bojangles" Robinson performed at the Hippodrome and stayed at local hotels, putting Jackson Ward on the map.',
+      tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/SanbornBasemap1925_1950EraLarger/MapServer/tile/{z}/{y}/{x}',
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1926_1950_6_25.geojson',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POI_1926_1950_Address.json',
+    },
+    {
+      id: '1950_1970', label: '1951 - 1964', title: 'Disruption',
+      sourceYear: 1960,
+      blurb: "Interstate 95, completed in 1958, cut directly through Jackson Ward. The product of intentionally destructive city policies, the highway displaced Black homeowners and severed the historic street grid. The entire 800 block of 2nd Street was demolished, splitting the community in two. Urban renewal projects like Gilpin Court, located across the highway, accelerated the decline of 2nd Street's commercial life, as the boundaries of Jackson Ward shrank and buildings began to be vacated. Nevertheless, Jackson Ward residents remembered their history, sowing the seeds for eventual reclamation.",
+      tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/ZoningMap1951_1964Era/MapServer/tile/{z}/{y}/{x}',
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1951_1964_6_25.geojson',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POI_1951_1964_Address.geojson',
+    },
+    {
+      id: '1970_2000', label: '1965 - 1999', title: 'Decline & Disinvestment',
+      sourceYear: 1975,
+      blurb: "After the disruption of the highway, the community struggled to maintain its former connectivity. The end of segregation led some businesses and residents to move elsewhere, shifting wealth away from the street. Many historic buildings were demolished or fell into disrepair. However, community institutions and longtime residents maintained the neighborhood's cultural memory. Their efforts would foster historical recognition, leading into the renewal of the street in the 21st century.",
+      tileUrl: 'https://tiles.arcgis.com/tiles/ak2bo87wLfUpMrt1/arcgis/rest/services/ZoningMap_1965to1999Era/MapServer/tile/{z}/{y}/{x}',
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_1965_1999_7_01.geojson',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POIS_1965_1999_Address2.geojson',
+    },
+    {
+      id: '2000_today', label: '2000 - Today', title: 'Renewal & Remembrance',
+      sourceYear: 2025,
+      blurb: 'Historic preservation efforts and new investment have changed the corridor again. New restaurants and companies call the street home, and historic markers line the sidewalks. However, tensions around gentrification, displacement, and historical memory surround the street. Construction is often approved at the city level and does not always keep Jackson Ward residents in mind. Nevertheless, awareness of the street's history is stronger than ever. Efforts like the 2nd Street Festival preserve the history of the street and lead it into the future.',
+      tileUrl: null,
+      parcelsUrl: 'https://redican.github.io/SecondStreetApplication/parcels_2000_current_6_25.geojson',
+      poisUrl: 'https://redican.github.io/SecondStreetApplication/POI_2000_Present_Address.geojson',
+    },
+  ];
+
+  let currentEraIdx = 2;
+  let photosVisible = true;
+  let currentBasemapMode = 'historical';
+  let mapInitialized = false;
+  let map;
+
+  // ── LANDING ERA BUTTONS ──
+  const landingGrid = document.getElementById('landing-era-grid');
+  
+  eras.forEach((era, idx) => {
+    const btn = document.createElement('button');
+    btn.className = 'landing-era-btn';
+    btn.innerHTML =
+      '<span class="era-dates">' + era.label + '</span>' +
+      '<span class="era-name">' + era.title + '</span>';
+  
+    btn.addEventListener('click', () => {
+      currentEraIdx = idx;
+      showMap();
+    });
+  
+    landingGrid.appendChild(btn);
+  });
+
+  // ── ACKNOWLEDGMENTS ROUTING ──
+  document.getElementById('ack-open-btn').addEventListener('click', () => {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('acknowledgments').style.display = 'flex';
+  });
+  document.getElementById('ack-back-btn').addEventListener('click', () => {
+    document.getElementById('acknowledgments').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+  });
+  document.getElementById('ack-back-btn-top').addEventListener('click', () => {
+    document.getElementById('acknowledgments').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+  });
+
+  // ── SHOW / HIDE MAP ──
+  function showMap() {
+    document.getElementById('landing').style.display = 'none';
+    document.getElementById('app').style.display = 'flex';
+    document.getElementById('map-hint').style.display = 'flex';
+    resetInactivityTimer();
+    if (!mapInitialized) {
+      initMap();
+      mapInitialized = true;
+    } else {
+      loadEra(currentEraIdx);
+    }
+  }
+
+  document.getElementById('back-btn').addEventListener('click', () => {
+    document.getElementById('app').style.display = 'none';
+    document.getElementById('landing').style.display = 'flex';
+  });
+
+  let inactivityTimer = null;
+
+  function resetInactivityTimer() {
+    if (inactivityTimer) clearTimeout(inactivityTimer);
+    // Only run the countdown while the map app is visible
+    if (document.getElementById('app').style.display === 'flex') {
+      inactivityTimer = setTimeout(() => {
+        window.location.reload();
+      }, 120000); // 120 seconds
+    }
+  }
+
+  document.addEventListener('click', resetInactivityTimer);
+  document.addEventListener('touchstart', resetInactivityTimer);
+
+  let legendCollapsed = false;
+  let preZoomView = null;
+  let currentPopup = null;
+  
+  function setLegendCollapsed(collapsed) {
+    legendCollapsed = collapsed;
+    document.getElementById('legend').classList.toggle('collapsed', collapsed);
+  }
+  
+  document.getElementById('legend-toggle-btn').addEventListener('click', (e) => {
+    e.stopPropagation();
+    setLegendCollapsed(!legendCollapsed);
+  });
+  document.getElementById('legend').addEventListener('click', () => {
+    if (legendCollapsed) setLegendCollapsed(false);
+  });
+
+  // ── HELPERS ──
+  function useClassColor(id) {
+    if (!id) return '#B0B0B0';
+    const v = String(id).trim().toLowerCase();
+    if (v === 'commercial') return '#D85A30';
+    if (v === 'residental' || v === 'residential') return '#4A7A9B';
+    if (v === 'mixed use') return '#8B6F9A';
+    if (v === 'vacant') return '#B0B0B0';
+    if (v === 'institutional') return '#6B8E23';
+    return '#888888';
+  }
+  function useClassLabel(id) {
+    if (!id) return 'Unknown';
+    const v = String(id).trim().toLowerCase();
+    if (v === 'residental') return 'Residential';
+    return String(id).trim();
+  }
+  function escapeHtml(s) {
+    return String(s).replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  const erasHintShown = new Set();
+  
+  function showEraHint(text) {
+    const canvas = document.getElementById('map-canvas');
+    const existing = canvas.querySelector('.era-toast-hint');
+    if (existing) existing.remove();
+  
+    const el = document.createElement('div');
+    el.className = 'era-toast-hint';
+    el.textContent = text;
+    el.style.cssText = 'position:absolute;bottom:60px;left:50%;transform:translateX(-50%);background:rgba(0,0,0,0.75);color:#fff;font-size:11px;padding:6px 12px;border-radius:20px;z-index:5;pointer-events:none;opacity:0;transition:opacity 0.4s;white-space:nowrap;';
+    canvas.appendChild(el);
+  
+    requestAnimationFrame(() => { el.style.opacity = '1'; });
+    setTimeout(() => {
+      el.style.opacity = '0';
+      setTimeout(() => el.remove(), 400);
+    }, 2200);
+  }
+
+  // ── HISTORIC PHOTOS (MapRVA / Yesterday's Richmond) ──
+  const PHOTOS_URL = 'https://redican.github.io/SecondStreetApplication/photos_second_street.geojson';
+
+  const ERA_BOUNDS = [
+    [1867, 1887], [1888, 1925], [1926, 1950],
+    [1951, 1964], [1965, 1999], [2000, 9999]
+  ];
+
+  function makePhotoMarker(color) {
+    const size = 48;
+    const c = document.createElement('canvas');
+    c.width = size; c.height = size;
+    const ctx = c.getContext('2d');
+    const cx = size / 2, cy = size / 2;
+    const R = size * 0.46;
+    const half = 34 * Math.PI / 180;
+    ctx.beginPath();
+    ctx.moveTo(cx, cy);
+    ctx.arc(cx, cy, R, -Math.PI / 2 - half, -Math.PI / 2 + half);
+    ctx.closePath();
+    ctx.fillStyle = color + '61';
+    ctx.fill();
+    ctx.beginPath();
+    ctx.arc(cx, cy, size * 0.15, 0, Math.PI * 2);
+    ctx.fillStyle = color;
+    ctx.fill();
+    ctx.lineWidth = size * 0.05;
+    ctx.strokeStyle = '#ffffff';
+    ctx.stroke();
+    return ctx.getImageData(0, 0, size, size);
+  }
+
+  function showPoiInfo(properties) {
+    const imagePath = String(properties.Image1 || '').replace(/^images\//i, '').trim();
+    const imageUrl = imagePath ? 'https://redican.github.io/SecondStreetApplication/' + imagePath : '';
+    const address = (properties.Address || '').trim();
+    const panel = document.getElementById('poi-info');
+    panel.innerHTML =
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;">' +
+        '<p class="popup-label" style="margin:0;">Historic Site' + (address ? ' · ' + escapeHtml(address) : '') + '</p>' +
+        '<button id="poi-close-btn" style="background:none;border:none;cursor:pointer;font-size:16px;color:var(--color-text-tertiary);line-height:1;padding:0;">✕</button>' +
+      '</div>' +
+      (imageUrl ? '<img src="' + imageUrl + '" alt="' + escapeHtml(properties.Name) + '" style="width:100%;max-height:240px;object-fit:contain;background:var(--color-background-tertiary);border-radius:8px;margin-bottom:12px;">' : '') +
+      '<h3 style="margin:0 0 8px 0;">' + escapeHtml(properties.Name) + '</h3>' +
+      '<p style="font-size:13px;line-height:1.6;color:var(--color-text-secondary);">' + escapeHtml(properties.WhyLong || properties.WhyShort) + '</p>' +
+      (properties.Image1Cite ? '<p style="margin-top:12px;"><a href="' + properties.Image1Cite + '" target="_blank">Image source</a></p>' : '');
+    panel.style.display = 'block';
+    document.getElementById('poi-close-btn').addEventListener('click', () => {
+      panel.style.display = 'none';
+      if (preZoomView) {
+        map.flyTo({ center: preZoomView.center, zoom: preZoomView.zoom, speed: 0.8, curve: 1.2 });
+        preZoomView = null;
+      }
+    });
+  }
+
+  function clearEraLayers() {
+    ['pois-circle','parcels-hover','parcels-line','parcels-fill','historical-tiles-layer'].forEach(id => {
+      if (map.getLayer(id)) map.removeLayer(id);
+    });
+    ['pois','parcels','historical-tiles'].forEach(id => {
+      if (map.getSource(id)) map.removeSource(id);
+    });
+  }
+
+  function loadEra(idx) {
+    currentEraIdx = idx;
+    if (currentPopup) {           
+      currentPopup.remove();
+      currentPopup = null;
+    }
+    const era = eras[idx];
+
+    document.getElementById('basemap-toggle').style.display = era.tileUrl ? 'flex' : 'none';
+    if (!era.tileUrl) {
+      currentBasemapMode = 'modern';
+      document.querySelectorAll('.basemap-btn').forEach(b => b.classList.toggle('active', b.dataset.mode === 'modern'));
+    }
+    document.getElementById('era-label-pill').textContent = era.label;
+    document.getElementById('era-title').textContent = era.title;
+    document.getElementById('era-blurb').textContent = era.blurb;
+    document.getElementById('legend-title').textContent = 'Parcel use, ' + era.label;
+    document.getElementById('placeholder-era-label').textContent = era.label;
+    document.getElementById('poi-info').style.display = 'none';
+    document.getElementById('map-attribution').textContent =
+      era.tileUrl
+        ? '© OpenStreetMap contributors · MapLibre · Historical basemap: Spatial Analysis Lab, University of Richmond'
+        : '© OpenStreetMap contributors · MapLibre';
+
+    Array.from(document.getElementById('era-buttons').children).forEach((btn, i) => {
+      btn.classList.toggle('active', i === idx);
+    });
+
+    clearEraLayers();
+
+    if (era.tileUrl) {
+      map.addSource('historical-tiles', { type: 'raster', tiles: [era.tileUrl], tileSize: 256, attribution: 'Historical basemap · Spatial Analysis Lab, University of Richmond' });
+      map.addLayer({ id: 'historical-tiles-layer', type: 'raster', source: 'historical-tiles', paint: { 'raster-opacity': currentBasemapMode === 'historical' ? 1.0 : 0, 'raster-fade-duration': 300 } });
+      document.getElementById('basemap-placeholder').style.display = 'none';
+    } else {
+      document.getElementById('basemap-placeholder').style.display = currentBasemapMode === 'historical' ? 'flex' : 'none';
+    }
+
+    map.setPaintProperty('osm-modern-layer', 'raster-opacity', currentBasemapMode === 'historical' && era.tileUrl ? 0.15 : 1.0);
+
+    if (era.parcelsUrl) {
+      map.addSource('parcels', { type: 'geojson', data: era.parcelsUrl });
+      map.addLayer({
+        id: 'parcels-fill', type: 'fill', source: 'parcels',
+        paint: {
+          'fill-color': ['match', ['downcase', ['coalesce', ['get', 'Identifica'], ['get', 'Identification'], '']],
+            'commercial','#D85A30','residental','#4A7A9B','residential','#4A7A9B',
+            'mixed use','#8B6F9A','institutional','#6B8E23','vacant','#B0B0B0','#888888'],
+          'fill-opacity': 0.80
+        }
+      });
+      map.addLayer({ id: 'parcels-line', type: 'line', source: 'parcels', paint: { 'line-color': '#2A2A2A', 'line-width': 0.6, 'line-opacity': 0.6 } });
+      map.addLayer({ id: 'parcels-hover', type: 'line', source: 'parcels', paint: { 'line-color': '#1a73e8', 'line-width': 2 }, filter: ['==', 'FID', -1] });
+      document.getElementById('legend').style.display = '';
+    } else {
+      document.getElementById('legend').style.display = 'none';
+    }
+
+    if (era.poisUrl) {
+      map.addSource('pois', { type: 'geojson', data: era.poisUrl });
+      map.addLayer({ id: 'pois-circle', type: 'circle', source: 'pois', paint: { 'circle-radius': 10, 'circle-color': '#1a73e8', 'circle-stroke-color': '#ffffff', 'circle-stroke-width': 2 } });
+    }
+
+    if (map.getSource('photos')) {
+      if (map.getLayer('photos-symbol')) map.removeLayer('photos-symbol');
+      const [eraStartYr, eraEndYr] = ERA_BOUNDS[idx];
+      const markerImage = idx < 3 ? 'photo-marker-black' : 'photo-marker-orange';
+      const markerColor = idx < 3 ? '#1a1a1a' : '#E08F2A';
+      document.getElementById('photos-toggle-dot').style.background = photosVisible ? markerColor : '#c9c9c9';
+      map.addLayer({
+        id: 'photos-symbol',
+        type: 'symbol',
+        source: 'photos',
+        filter: ['all',
+          ['<=', ['get', 'start'], eraEndYr],
+          ['>=', ['get', 'end'], eraStartYr]
+        ],
+        layout: {
+          'visibility': photosVisible ? 'visible' : 'none',
+          'icon-image': markerImage,
+          'icon-rotate': ['coalesce', ['get', 'direction'], 0],
+          'icon-rotation-alignment': 'map',
+          'icon-allow-overlap': true,
+          'icon-ignore-placement': true,
+          'icon-size': ['interpolate', ['linear'], ['zoom'], 14, 0.7, 17, 1.3, 20, 1.8]
+        }
+      });
+  }
+
+  if (!erasHintShown.has(era.id) && era.parcelsUrl) {
+    erasHintShown.add(era.id);
+    setTimeout(() => showEraHint('Tap a building for details'), 500);
+  }
+}
+
+  function initMap() {
+    map = new maplibregl.Map({
+      container: 'map',
+      style: {
+        version: 8,
+        sources: { 'osm-modern': { type: 'raster', tiles: ['https://a.tile.openstreetmap.org/{z}/{x}/{y}.png','https://b.tile.openstreetmap.org/{z}/{x}/{y}.png','https://c.tile.openstreetmap.org/{z}/{x}/{y}.png'], tileSize: 256, attribution: '© OpenStreetMap contributors', maxzoom: 19 } },
+        layers: [{ id: 'osm-modern-layer', type: 'raster', source: 'osm-modern', paint: { 'raster-opacity': 1.0 } }]
+      },
+      center: [-77.43969803985877, 37.5451227330145],
+      zoom: 16.5,
+      maxZoom: 20,
+      minZoom: 14,
+      bearing: 37.5,
+      dragRotate: false,
+      touchZoomRotate: false,
+      pitchWithRotate: false,
+      attributionControl: false
+    });
+    
+    map.addControl(new maplibregl.NavigationControl({ showCompass: false }), 'bottom-right');
+
+    const SOFT_BOUNDS = new maplibregl.LngLatBounds(
+      [-77.4480, 37.5370],
+      [-77.4310, 37.5900]
+    );
+    
+    const DEFAULT_CENTER = [-77.43969803985877, 37.5451227330145];
+    const DEFAULT_ZOOM = 16.5;
+    
+    let isCorrectingBounds = false;
+    
+    map.on('moveend', () => {
+      if (isCorrectingBounds) return;
+    
+      const center = map.getCenter();
+      if (!SOFT_BOUNDS.contains(center)) {
+        isCorrectingBounds = true;
+        map.easeTo({
+          center: DEFAULT_CENTER,
+          zoom: DEFAULT_ZOOM,
+          duration: 600
+        });
+        map.once('moveend', () => { isCorrectingBounds = false; });
+      }
+    });
+
+    map.on('mousemove', 'parcels-fill', (e) => {
+      if (e.features.length > 0) {
+        map.getCanvas().style.cursor = 'pointer';
+        map.setFilter('parcels-hover', ['==', 'FID', e.features[0].properties.FID]);
+      }
+    });
+    map.on('mouseleave', 'parcels-fill', () => {
+      map.getCanvas().style.cursor = '';
+      if (map.getLayer('parcels-hover')) map.setFilter('parcels-hover', ['==', 'FID', -1]);
+    });
+    map.on('click', 'parcels-fill', (e) => {
+      if (!e.features || !e.features.length) return;
+      const poiHits = map.queryRenderedFeatures(e.point, { layers: ['pois-circle'] });
+      if (poiHits.length > 0) return;
+      const p = e.features[0].properties;
+      const useClass = useClassLabel(p.Identification);
+      const useColor = useClassColor(p.Identification);
+      const name = (p.Business_Type || '').trim();
+      const address = (p.Address || p.AddressLab || '').trim();
+      const id2level = (p.ID2level || '').trim();
+      const displayName = name || useClass;
+      const era = eras[currentEraIdx];
+    
+      let html = '';
+      html += '<p class="popup-label">' +
+        (escapeHtml(address) || 'Address unknown') +
+        (era.sourceYear ? ' <span style="color:#4a4438;">(' + era.sourceYear + ' directory)</span>' : '') +
+        '</p>';
+      html += '<p class="popup-name">' + escapeHtml(displayName) + '</p>';
+      html += '<span class="popup-use" style="background:' + useColor + '22;color:' + useColor + ';">' + escapeHtml(useClass) + '</span>';
+      if (id2level) html += '<p class="popup-notes">' + escapeHtml(id2level) + '</p>';
+      currentPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '260px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+    });
+
+    map.on('click', 'pois-circle', (e) => {
+      const p = e.features[0].properties;
+      const address = (p.Address || '').trim();
+      const html =
+        '<p class="popup-label">Historic Site' + (address ? ' · ' + escapeHtml(address) : '') + '</p>' +
+        '<p class="popup-name">' + escapeHtml(p.Name) + '</p>' +
+        '<p class="popup-notes">' + escapeHtml(p.WhyShort) + '</p>' +
+        '<button id="learn-more-btn" style="margin-top:8px;background:#1a73e8;color:white;border:none;border-radius:6px;padding:6px 10px;cursor:pointer;">Learn More →</button>';
+      const poiPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(e.lngLat).setHTML(html).addTo(map);
+      currentPopup = poiPopup;
+      setTimeout(() => {
+        const btn = document.getElementById('learn-more-btn');
+        if (!btn) return;
+        btn.addEventListener('click', () => {
+          preZoomView = { center: map.getCenter(), zoom: map.getZoom() };
+          showPoiInfo(p);
+          map.flyTo({ center: e.lngLat, zoom: 19, speed: 0.8, curve: 1.2 });
+          poiPopup.remove();
+        });
+      }, 0);
+    });
+    map.on('mouseenter', 'pois-circle', () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'pois-circle', () => { map.getCanvas().style.cursor = ''; });
+
+    function photoDisplayUrl(u) {
+      if (!u) return '';
+      const m = u.match(/^(https:\/\/cdn\.yesterdays\.maprva\.org\/images\/\d+)\/original\.tiff?$/i);
+      return m ? m[1] + '/1/transformed.webp' : u;
+    }
+
+    map.on('click', 'photos-symbol', (e) => {
+      const p = e.features[0].properties;
+      const coords = e.features[0].geometry.coordinates.slice();
+      const date = p.date ? ' · ' + escapeHtml(p.date) : '';
+      const entry = p.img_entry || '';
+      const src = photoDisplayUrl(p.img_url);
+      const idMatch = (p.img_url || '').match(/\/images\/(\d+)\//);
+      const imgId = idMatch ? idMatch[1] : null;
+      const html =
+        '<p class="popup-label">Historic Photo' + date + '</p>' +
+        '<p class="photo-caption" style="font-size:13px;font-weight:500;line-height:1.4;margin:0 0 4px 0;color:var(--color-text-primary);"></p>' +
+        '<img class="photo-img" src="' + escapeHtml(src) + '" alt="Historic photo of 2nd Street" loading="lazy" ' +
+          'style="width:100%;max-width:260px;max-height:220px;object-fit:contain;border-radius:8px;display:block;margin:4px 0;background:#f0f0f0;">' +
+        (entry ? '<a href="' + escapeHtml(entry) + '" target="_blank" rel="noopener" style="font-size:12px;">View source ↗</a>' : '');
+      const photoPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(coords).setHTML(html).addTo(map);
+      currentPopup = photoPopup;
+      const popupEl = photoPopup.getElement();
+      const imgEl = popupEl.querySelector('img.photo-img');
+      if (imgEl) imgEl.addEventListener('error', () => {
+        imgEl.style.display = 'none';
+        const note = document.createElement('p');
+        note.style.cssText = 'font-size:12px;color:var(--color-text-secondary);margin:4px 0;';
+        note.textContent = 'Preview not available for this image - use the source link.';
+        imgEl.after(note);
+      });
+      if (imgId) {
+        fetch('https://yesterdays.maprva.org/api/v2/images/' + imgId + '/')
+          .then(r => r.ok ? r.json() : null)
+          .then(d => {
+            if (!d) return;
+            const caption = d.title || d.caption || d.name || '';
+            const capEl = popupEl.querySelector('.photo-caption');
+            if (capEl && caption) capEl.textContent = caption;
+          })
+          .catch(() => {});
+      }
+    });
+    map.on('mouseenter', 'photos-symbol', () => { map.getCanvas().style.cursor = 'pointer'; });
+    map.on('mouseleave', 'photos-symbol', () => { map.getCanvas().style.cursor = ''; });
+
+    const photosToggleBtn = document.getElementById('photos-toggle');
+    if (photosToggleBtn) photosToggleBtn.addEventListener('click', () => {
+      photosVisible = !photosVisible;
+      if (map.getLayer('photos-symbol')) {
+        map.setLayoutProperty('photos-symbol', 'visibility', photosVisible ? 'visible' : 'none');
+      }
+      photosToggleBtn.setAttribute('aria-pressed', photosVisible ? 'true' : 'false');
+      photosToggleBtn.style.opacity = photosVisible ? '1' : '0.65';
+      const currentMarkerColor = currentEraIdx < 3 ? '#1a1a1a' : '#E08F2A';
+      document.getElementById('photos-toggle-dot').style.background = photosVisible ? currentMarkerColor : '#c9c9c9';
+      document.getElementById('photos-toggle-label').textContent = photosVisible ? 'Photos' : 'Photos off';
+    });
+    
+    document.querySelectorAll('.basemap-btn').forEach(btn => {
+      btn.addEventListener('click', () => {
+        currentBasemapMode = btn.dataset.mode;
+        document.querySelectorAll('.basemap-btn').forEach(b => b.classList.toggle('active', b === btn));
+        const era = eras[currentEraIdx];
+        if (currentBasemapMode === 'modern') {
+          map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+          if (map.getLayer('historical-tiles-layer')) map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 0);
+          document.getElementById('basemap-placeholder').style.display = 'none';
+        } else {
+          if (era.tileUrl && map.getLayer('historical-tiles-layer')) {
+            map.setPaintProperty('osm-modern-layer', 'raster-opacity', 0.15);
+            map.setPaintProperty('historical-tiles-layer', 'raster-opacity', 1.0);
+            document.getElementById('basemap-placeholder').style.display = 'none';
+          } else {
+            map.setPaintProperty('osm-modern-layer', 'raster-opacity', 1.0);
+            document.getElementById('basemap-placeholder').style.display = 'flex';
+          }
+        }
+      });
+    });
+
+    const eraButtonsEl = document.getElementById('era-buttons');
+    eras.forEach((era, idx) => {
+      const btn = document.createElement('button');
+      btn.textContent = era.label;
+      btn.className = 'era-btn';
+      if (!era.tileUrl && !era.parcelsUrl) { btn.classList.add('disabled'); btn.title = 'Data in production'; }
+      btn.addEventListener('click', () => loadEra(idx));
+      eraButtonsEl.appendChild(btn);
+    });
+
+    map.on('load', () => {
+      if (!map.hasImage('photo-marker-orange')) {
+        map.addImage('photo-marker-orange', makePhotoMarker('#E08F2A'), { pixelRatio: 2 });
+      }
+      if (!map.hasImage('photo-marker-black')) {
+        map.addImage('photo-marker-black', makePhotoMarker('#1a1a1a'), { pixelRatio: 2 });
+      }
+      if (!map.getSource('photos')) {
+        map.addSource('photos', { type: 'geojson', data: PHOTOS_URL });
+      }
+      loadEra(currentEraIdx);
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
