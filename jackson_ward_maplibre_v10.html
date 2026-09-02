@@ -1094,6 +1094,8 @@
         (entry ? '<a href="' + escapeHtml(entry) + '" target="_blank" rel="noopener" style="font-size:12px;">View source \u2197</a>' : '');
       const photoPopup = new maplibregl.Popup({ closeButton: true, maxWidth: '300px' }).setLngLat(coords).setHTML(html).addTo(map);
       currentPopup = photoPopup;
+      // Add this line to define popupEl before querying it:
+      const popupEl = photoPopup.getElement();
       // Graceful fallback: if the image fails to load, hide it and show a note.
       const imgEl = popupEl.querySelector('img.photo-img');
       if (imgEl) imgEl.addEventListener('error', () => {
